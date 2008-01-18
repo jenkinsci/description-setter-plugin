@@ -8,7 +8,7 @@
   </parent>
   
   <artifactId>description-setter</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>hpi</packaging>
   <name>Hudson description setter plugin</name>
   
@@ -22,4 +22,8 @@
         </plugins>
      </pluginManagement>
   </build>
+
+  <scm>
+    <tag>description-setter-1_0</tag>
+  </scm>
 </project>
