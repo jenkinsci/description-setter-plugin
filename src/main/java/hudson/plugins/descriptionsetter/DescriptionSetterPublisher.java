@@ -57,9 +57,10 @@ public class DescriptionSetterPublisher extends Publisher {
 		String version;
 		// Assume default encoding and text files
 		String line;
+    Pattern pattern = Pattern.compile(regexp);
 		BufferedReader reader = new BufferedReader(new FileReader(logFile));
 		while ((line = reader.readLine()) != null) {
-			Matcher matcher = Pattern.compile(regexp).matcher(line);
+			Matcher matcher = pattern.matcher(line);
 			if (matcher.find()) {
 				version = matcher.group(1);
 				return version;
