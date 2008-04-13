@@ -22,10 +22,12 @@ import org.kohsuke.stapler.StaplerRequest;
 public class DescriptionSetterPublisher extends Publisher {
 
 	private final String regexp;
+	private final  boolean setForFailed;
 
 	@DataBoundConstructor
-	public DescriptionSetterPublisher(String regexp) {
+	public DescriptionSetterPublisher(String regexp, boolean setForFailed) {
 		this.regexp = regexp;
+		this.setForFailed = setForFailed;
 	}
 
 	@Override
@@ -33,7 +35,7 @@ public class DescriptionSetterPublisher extends Publisher {
 			BuildListener listener) throws InterruptedException {
 
 		try {
-			if (build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
+			if (setForFailed || build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
 				String description = parseLog(build.getLogFile());
 				if (description != null) {
 					build.addAction(new DescriptionSetterAction(description));
@@ -95,6 +97,10 @@ public class DescriptionSetterPublisher extends Publisher {
 
 	public String getRegexp() {
 		return regexp;
+	}
+
+	public boolean isSetForFailed() {
+		return setForFailed;
 	}
 
 }
