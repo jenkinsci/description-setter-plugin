@@ -22,10 +22,4 @@
         </plugins>
      </pluginManagement>
   </build>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/1.1</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/1.1</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/description-setter/tags/1.1</url>
-  </scm>
 </project>
