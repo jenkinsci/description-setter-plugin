@@ -2,8 +2,12 @@
 	<f:entry title="Regular Expression" help="${rootURL}/plugin/description-setter/regexp.html">
     	<f:textbox name="description.regexp" value="${instance.regexp}" />
 	</f:entry>
-	<f:entry title="Build Result" help="${rootURL}/plugin/description-setter/setForFailed.html">
+	<f:entry title="Failed Build Setup" help="${rootURL}/plugin/description-setter/setForFailed.html">
 		<f:checkbox name="description.setForFailed" checked="${instance.setForFailed}"/>
 		Set description for failed builds.
 	</f:entry>
+	<f:entry title="Regular Expression For Failed" help="${rootURL}/plugin/description-setter/regexpForFailed.html">
+    	<f:textbox name="description.regexpForFailed" value="${instance.regexpForFailed}" />
+	</f:entry>
+
 </j:jelly>

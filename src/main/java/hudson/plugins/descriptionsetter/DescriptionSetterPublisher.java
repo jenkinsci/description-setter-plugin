@@ -23,11 +23,13 @@ public class DescriptionSetterPublisher extends Publisher {
 
 	private final String regexp;
 	private final  boolean setForFailed;
+	private final String regexpForFailed;
 
 	@DataBoundConstructor
-	public DescriptionSetterPublisher(String regexp, boolean setForFailed) {
+	public DescriptionSetterPublisher(String regexp, boolean setForFailed, String regexpForFailed) {
 		this.regexp = regexp;
 		this.setForFailed = setForFailed;
+		this.regexpForFailed = regexpForFailed;
 	}
 
 	@Override
@@ -35,7 +37,24 @@ public class DescriptionSetterPublisher extends Publisher {
 			BuildListener listener) throws InterruptedException {
 
 		try {
-			if (setForFailed || build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
+			if (setForFailed && build.getResult().isWorseThan(Result.UNSTABLE)) {
+				String description = null;
+				if(regexpForFailed != null && !regexpForFailed.equals("")) {
+					description = parseFailLog(build.getLogFile());
+				}
+
+				if(description == null) {
+					description = parseLog(build.getLogFile());
+				}
+				
+				if (description != null) {
+					build.addAction(new DescriptionSetterAction(description));
+					listener.getLogger().println("Description found: " + description);
+				} else {
+					listener.getLogger().println("Description not found.");
+				}
+				build.setDescription(description);
+			} else if (setForFailed || build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
 				String description = parseLog(build.getLogFile());
 				if (description != null) {
 					build.addAction(new DescriptionSetterAction(description));
@@ -59,7 +78,24 @@ public class DescriptionSetterPublisher extends Publisher {
 		String version;
 		// Assume default encoding and text files
 		String line;
-    Pattern pattern = Pattern.compile(regexp);
+		Pattern pattern = Pattern.compile(regexp);
+		BufferedReader reader = new BufferedReader(new FileReader(logFile));
+		while ((line = reader.readLine()) != null) {
+			Matcher matcher = pattern.matcher(line);
+			if (matcher.find()) {
+				version = matcher.group(1);
+				return version;
+			}
+		}
+		return null;
+	}
+	
+	private String parseFailLog(File logFile) throws IOException,
+			InterruptedException {
+		String version;
+		// Assume default encoding and text files
+		String line;
+		Pattern pattern = Pattern.compile(regexpForFailed);
 		BufferedReader reader = new BufferedReader(new FileReader(logFile));
 		while ((line = reader.readLine()) != null) {
 			Matcher matcher = pattern.matcher(line);
@@ -103,4 +139,7 @@ public class DescriptionSetterPublisher extends Publisher {
 		return setForFailed;
 	}
 
+	public String getRegexpForFailed() {
+		return regexpForFailed;
+	}
 }
