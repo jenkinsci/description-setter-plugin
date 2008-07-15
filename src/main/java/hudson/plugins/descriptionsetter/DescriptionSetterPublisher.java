@@ -83,7 +83,11 @@ public class DescriptionSetterPublisher extends Publisher {
 		while ((line = reader.readLine()) != null) {
 			Matcher matcher = pattern.matcher(line);
 			if (matcher.find()) {
-				version = matcher.group(1);
+				if(matcher.groupCount() == 0) {
+					version = matcher.group();
+				} else {					
+					version = matcher.group(1);
+				}
 				return version;
 			}
 		}
@@ -100,7 +104,11 @@ public class DescriptionSetterPublisher extends Publisher {
 		while ((line = reader.readLine()) != null) {
 			Matcher matcher = pattern.matcher(line);
 			if (matcher.find()) {
-				version = matcher.group(1);
+				if(matcher.groupCount() == 0) {
+					version = matcher.group();
+				} else {					
+					version = matcher.group(1);
+				}
 				return version;
 			}
 		}
