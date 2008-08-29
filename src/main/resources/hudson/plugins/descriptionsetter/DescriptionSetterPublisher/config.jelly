@@ -1,12 +1,16 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<f:entry title="Regular Expression" help="${rootURL}/plugin/description-setter/regexp.html">
+	<f:entry title="Use explicit decscription instead of regexp" help="${rootURL}/plugin/description-setter/regexpOrHardCode.html">
+		<f:checkbox name="description.explicitNotRegexp" checked="${instance.explicitNotRegexp}"/>
+		Check to hard code the description instead of doing a regexp search of build log.
+	</f:entry>
+	<f:entry title="Regular Expression/Description" help="${rootURL}/plugin/description-setter/regexp.html">
     	<f:textbox name="description.regexp" value="${instance.regexp}" />
 	</f:entry>
 	<f:entry title="Failed Build Setup" help="${rootURL}/plugin/description-setter/setForFailed.html">
 		<f:checkbox name="description.setForFailed" checked="${instance.setForFailed}"/>
 		Set description for failed builds.
 	</f:entry>
-	<f:entry title="Regular Expression For Failed" help="${rootURL}/plugin/description-setter/regexpForFailed.html">
+	<f:entry title="Regular Expression/Description For Failed" help="${rootURL}/plugin/description-setter/regexpForFailed.html">
     	<f:textbox name="description.regexpForFailed" value="${instance.regexpForFailed}" />
 	</f:entry>
 

@@ -21,12 +21,14 @@ import org.kohsuke.stapler.StaplerRequest;
 
 public class DescriptionSetterPublisher extends Publisher {
 
+	private final boolean explicitNotRegexp;
 	private final String regexp;
 	private final  boolean setForFailed;
 	private final String regexpForFailed;
 
 	@DataBoundConstructor
-	public DescriptionSetterPublisher(String regexp, boolean setForFailed, String regexpForFailed) {
+	public DescriptionSetterPublisher(boolean explicitNotRegexp, String regexp, boolean setForFailed, String regexpForFailed) {
+		this.explicitNotRegexp = explicitNotRegexp;
 		this.regexp = regexp;
 		this.setForFailed = setForFailed;
 		this.regexpForFailed = regexpForFailed;
@@ -37,6 +39,7 @@ public class DescriptionSetterPublisher extends Publisher {
 			BuildListener listener) throws InterruptedException {
 
 		try {
+          if (!explicitNotRegexp) {
 			if (setForFailed && build.getResult().isWorseThan(Result.UNSTABLE)) {
 				String description = null;
 				if(regexpForFailed != null && !regexpForFailed.equals("")) {
@@ -65,6 +68,13 @@ public class DescriptionSetterPublisher extends Publisher {
 
 				build.setDescription(description);
 			}
+          } else { // Hard Code
+            if (setForFailed && build.getResult().isWorseThan(Result.UNSTABLE)) {
+                build.setDescription(regexpForFailed);
+            } else if (setForFailed || build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
+                build.setDescription(regexp);
+            }
+          }
 		} catch (IOException e) {
 			listener.getLogger().println("Description Setter: " + e.getMessage());
 			e.printStackTrace(listener.getLogger());
@@ -137,6 +147,10 @@ public class DescriptionSetterPublisher extends Publisher {
 
 	public Descriptor<Publisher> getDescriptor() {
 		return DescriptorImpl.INSTANCE;
+	}
+    
+    public boolean isExplicitNotRegexp() {
+        return explicitNotRegexp;
 	}
 
 	public String getRegexp() {
