@@ -1,11 +1,15 @@
 package hudson.plugins.descriptionsetter;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,7 +23,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-public class DescriptionSetterPublisher extends Publisher {
+public class DescriptionSetterPublisher extends Recorder {
 
 	private final boolean explicitNotRegexp;
 	private final String regexp;
@@ -32,6 +36,10 @@ public class DescriptionSetterPublisher extends Publisher {
 		this.regexp = regexp;
 		this.setForFailed = setForFailed;
 		this.regexpForFailed = regexpForFailed;
+	}
+
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.NONE;
 	}
 
 	@Override
@@ -125,9 +133,10 @@ public class DescriptionSetterPublisher extends Publisher {
 		return null;
 	}
 
-	public static final class DescriptorImpl extends Descriptor<Publisher> {
+	@Extension
+	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-		private DescriptorImpl() {
+		public DescriptorImpl() {
 			super(DescriptionSetterPublisher.class);
 		}
 
@@ -137,16 +146,20 @@ public class DescriptionSetterPublisher extends Publisher {
 		}
 
 		@Override
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			return true;
+		}
+
+		@Override
 		public Publisher newInstance(StaplerRequest req, JSONObject formData)
 				throws FormException {
 			return req.bindJSON(DescriptionSetterPublisher.class, formData);
 		}
-
-		public static final DescriptorImpl INSTANCE = new DescriptorImpl();
 	}
 
-	public Descriptor<Publisher> getDescriptor() {
-		return DescriptorImpl.INSTANCE;
+	@Override
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl)super.getDescriptor();
 	}
     
     public boolean isExplicitNotRegexp() {

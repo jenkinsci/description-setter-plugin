@@ -5,6 +5,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.JobProperty;
@@ -19,16 +20,10 @@ public class JobByDescription extends JobProperty<Job<?,?>>{
 		return new JobByDescriptionAction(owner);
 	}
 
-	@Override
-	public JobPropertyDescriptor getDescriptor() {
-		return DESCRIPTOR;
-	}
-	
-	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-	
+	@Extension
 	public static class DescriptorImpl extends JobPropertyDescriptor {
 
-		protected DescriptorImpl() {
+		public DescriptorImpl() {
 			super(JobByDescription.class);
 		}
 
