@@ -78,9 +78,9 @@ public class DescriptionSetterPublisher extends Recorder {
 			}
           } else { // Hard Code
             if (setForFailed && build.getResult().isWorseThan(Result.UNSTABLE)) {
-                build.setDescription(regexpForFailed);
+                build.setDescription(build.getEnvironment(listener).expand(regexpForFailed));
             } else if (setForFailed || build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
-                build.setDescription(regexp);
+                build.setDescription(build.getEnvironment(listener).expand(regexp));
             }
           }
 		} catch (IOException e) {
