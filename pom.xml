@@ -8,9 +8,15 @@
   </parent>
   
   <artifactId>description-setter</artifactId>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.5</version>
   <packaging>hpi</packaging>
   <name>Hudson description setter plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Description+Setter+Plugin</url>
   
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/description-setter-1.5</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/description-setter-1.5</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/description-setter-1.5</url>
+  </scm>
 </project>
