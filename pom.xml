@@ -11,15 +11,6 @@
   <version>1.5-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Hudson description setter plugin</name>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Description+Setter+Plugin</url>
   
-  <build>
-    <pluginManagement>
-        <plugins>
-          <plugin>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.2</version>
-          </plugin>
-        </plugins>
-     </pluginManagement>
-  </build>
 </project>
