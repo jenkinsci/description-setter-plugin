@@ -101,12 +101,17 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 	}
 
 	public void test11() throws Exception {
-
 		assertEquals(null, getDescription("regex",
 				Result.SUCCESS, "xxx", null, "description success",
 				null));
 	}
 
+	public void testURL() throws Exception {
+		assertEquals("<a href=\"http://foo/bar\">http://foo/bar</a>", getDescription("url:http://foo/bar",
+				Result.SUCCESS, "url:(.*)", null, null,
+				null));
+	}
+	
 	private String getDescription(String text, Result result, String regexp,
 			String regexpForFailed, String description,
 			String descriptionForFailed) throws Exception {

@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectStreamException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,6 +83,8 @@ public class DescriptionSetterPublisher extends Recorder {
 				listener.getLogger().println("[description-setter] Could not determine description.");
 				return true;
 			}
+			
+			result = urlify(result);
 
 			build.addAction(new DescriptionSetterAction(result));
 			listener.getLogger().println("Description set: " + result);
@@ -134,6 +138,15 @@ public class DescriptionSetterPublisher extends Recorder {
 			result = result.replace("\\" + i, matcher.group(i));
 		}
 		return result;
+	}
+	
+	private String urlify(String text) {
+		try {
+			new URL(text);
+			return String.format("<a href=\"%s\">%s</a>", text, text); 
+		} catch (MalformedURLException e) {
+			return text;
+		}
 	}
 
 	@Extension
