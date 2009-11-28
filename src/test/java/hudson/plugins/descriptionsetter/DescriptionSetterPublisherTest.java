@@ -37,72 +37,53 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 		}
 	}
 
-	public void test1() throws Exception {
+	public void testSuccessDefaultDescription() throws Exception {
 		assertEquals("one", getDescription("text one", Result.SUCCESS,
 				"text (.*)", null, null, null));
 	}
 
-	public void test2() throws Exception {
+	public void testSuccessConfiguredDescription() throws Exception {
 		assertEquals("description one", getDescription("text one",
 				Result.SUCCESS, "text (.*)", null, "description \\1", null));
 	}
 
-	public void test3() throws Exception {
+	public void testFailureWithNoFailureRegex() throws Exception {
 
 		assertEquals("one", getDescription("text one", Result.FAILURE,
 				"text (.*)", null, null, null));
 	}
 
-	public void test4() throws Exception {
+	public void testFailureWithFailureRegexAndDefaultDescrption() throws Exception {
 
 		assertEquals("text", getDescription("text one", Result.FAILURE,
 				"text (.*)", "(.*) one", null, null));
 	}
 
-	public void test5() throws Exception {
-
-		assertEquals("description one", getDescription("text one",
-				Result.SUCCESS, "text (.*)", null, "description \\1", null));
-	}
-
-	public void test6() throws Exception {
+	public void testFailureWithFailureRegexAndConfiguredDescription() throws Exception {
 
 		assertEquals("description text", getDescription("text one",
 				Result.FAILURE, "text (.*)", "(.*) one", null,
 				"description \\1"));
 	}
 
-	public void test7() throws Exception {
+	public void testSuccessWithFixedDescription() throws Exception {
 
 		assertEquals("description success", getDescription("xxx",
 				Result.SUCCESS, null, null, "description success",
 				"description failure"));
 	}
 
-	public void test8() throws Exception {
+	public void testFailureWithFixedDescription() throws Exception {
 
 		assertEquals("description failure", getDescription("xxx",
 				Result.FAILURE, null, null, "description success",
 				"description failure"));
 	}
 
-	public void test9() throws Exception {
-
-		assertEquals("description failure", getDescription("xxx",
-				Result.FAILURE, "regex", null, "description success",
-				"description failure"));
-	}
-
-	public void test10() throws Exception {
+	public void testSuccessNoMatch() throws Exception {
 
 		assertEquals(null, getDescription("xxx",
 				Result.SUCCESS, "regex", null, "description success",
-				null));
-	}
-
-	public void test11() throws Exception {
-		assertEquals(null, getDescription("regex",
-				Result.SUCCESS, "xxx", null, "description success",
 				null));
 	}
 

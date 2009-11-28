@@ -1,21 +1,17 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<f:entry title="Regular expression"
-		help="${rootURL}/plugin/description-setter/regexp.html">
-		<f:textbox field="regexp" />
+	<f:entry title="Regular expression" field="regexp">
+		<f:textbox />
 	</f:entry>
-	<f:entry title="Description"
-		help="${rootURL}/plugin/description-setter/regexp.html">
-		<f:textbox field="description" />
+	<f:entry title="Description" field="description">
+		<f:textbox />
 	</f:entry>
 	<f:advanced>
-		<f:entry title="Regular expression for failed builds"
-			help="${rootURL}/plugin/description-setter/regexpForFailed.html">
-			<f:textbox field="regexpForFailed" />
+		<f:entry title="Regular expression for failed builds" field="regexpForFailed">
+			<f:textbox />
 		</f:entry>
-		<f:entry title="Description for failed builds"
-			help="${rootURL}/plugin/description-setter/regexp.html">
-			<f:textbox field="descriptionForFailed" />
+		<f:entry title="Description for failed builds" field="descriptionForFailed">
+			<f:textbox />
 		</f:entry>
 	</f:advanced>
 
