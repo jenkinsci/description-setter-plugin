@@ -2,6 +2,7 @@ package hudson.plugins.descriptionsetter;
 
 import hudson.Extension;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -15,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectStreamException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,17 +27,24 @@ import org.kohsuke.stapler.StaplerRequest;
 
 public class DescriptionSetterPublisher extends Recorder {
 
-	private final boolean explicitNotRegexp;
 	private final String regexp;
-	private final  boolean setForFailed;
 	private final String regexpForFailed;
+	private final String description;
+	
+	private final String descriptionForFailed;
 
+	@Deprecated
+	private transient boolean setForFailed = false;
+
+	@Deprecated
+	private transient boolean explicitNotRegexp= false;
+	
 	@DataBoundConstructor
-	public DescriptionSetterPublisher(boolean explicitNotRegexp, String regexp, boolean setForFailed, String regexpForFailed) {
-		this.explicitNotRegexp = explicitNotRegexp;
+	public DescriptionSetterPublisher(String regexp, String regexpForFailed, String description, String descriptionForFailed) {
 		this.regexp = regexp;
-		this.setForFailed = setForFailed;
 		this.regexpForFailed = regexpForFailed;
+		this.description = Util.fixEmptyAndTrim(description);
+		this.descriptionForFailed = Util.fixEmptyAndTrim(descriptionForFailed);
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
@@ -47,53 +56,49 @@ public class DescriptionSetterPublisher extends Recorder {
 			BuildListener listener) throws InterruptedException {
 
 		try {
-          if (!explicitNotRegexp) {
-			if (setForFailed && build.getResult().isWorseThan(Result.UNSTABLE)) {
-				String description = null;
-				if(regexpForFailed != null && !regexpForFailed.equals("")) {
-					description = parseFailLog(build.getLogFile());
-				}
-
-				if(description == null) {
-					description = parseLog(build.getLogFile());
-				}
-				
-				if (description != null) {
-					build.addAction(new DescriptionSetterAction(description));
-					listener.getLogger().println("Description found: " + description);
+			Matcher matcher;
+			String result = null;
+			
+			boolean useUnstable = (regexpForFailed != null || descriptionForFailed != null) && build.getResult().isWorseThan(Result.UNSTABLE);
+			
+			matcher = parseLog(build.getLogFile(), useUnstable ? regexpForFailed : regexp);
+			if (matcher != null) {
+				result = getExpandedDescription(matcher, useUnstable ? descriptionForFailed : description);
+				result = build.getEnvironment(listener).expand(result);
+			} else {
+				if (useUnstable) {
+					if (result == null && regexpForFailed == null && descriptionForFailed != null) {
+						result = descriptionForFailed;
+					}
 				} else {
-					listener.getLogger().println("Description not found.");
+					if (result == null && regexp == null && description != null) {
+						result = description;
+					}
 				}
-				build.setDescription(description);
-			} else if (setForFailed || build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
-				String description = parseLog(build.getLogFile());
-				if (description != null) {
-					build.addAction(new DescriptionSetterAction(description));
-					listener.getLogger().println("Description found: " + description);
-				} else {
-					listener.getLogger().println("Description not found.");
-				}
-
-				build.setDescription(description);
 			}
-          } else { // Hard Code
-            if (setForFailed && build.getResult().isWorseThan(Result.UNSTABLE)) {
-                build.setDescription(build.getEnvironment(listener).expand(regexpForFailed));
-            } else if (setForFailed || build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
-                build.setDescription(build.getEnvironment(listener).expand(regexp));
-            }
-          }
+			
+			if (result == null) {
+				listener.getLogger().println("[description-setter] Could not determine description.");
+				return true;
+			}
+
+			build.addAction(new DescriptionSetterAction(result));
+			listener.getLogger().println("Description set: " + result);
+			build.setDescription(result);
 		} catch (IOException e) {
-			listener.getLogger().println("Description Setter: " + e.getMessage());
-			e.printStackTrace(listener.getLogger());
+			e.printStackTrace(listener.error("error while parsing logs for description-setter"));
 		}
 
 		return true;
 	}
 
-	private String parseLog(File logFile) throws IOException,
+	private Matcher parseLog(File logFile, String regexp) throws IOException,
 			InterruptedException {
-		String version;
+		
+		if (regexp == null) {
+			return null;
+		}
+		
 		// Assume default encoding and text files
 		String line;
 		Pattern pattern = Pattern.compile(regexp);
@@ -101,40 +106,39 @@ public class DescriptionSetterPublisher extends Recorder {
 		while ((line = reader.readLine()) != null) {
 			Matcher matcher = pattern.matcher(line);
 			if (matcher.find()) {
-				if(matcher.groupCount() == 0) {
-					version = matcher.group();
-				} else {					
-					version = matcher.group(1);
-				}
-				return version;
+				return matcher;
 			}
 		}
 		return null;
 	}
 	
-	private String parseFailLog(File logFile) throws IOException,
-			InterruptedException {
-		String version;
-		// Assume default encoding and text files
-		String line;
-		Pattern pattern = Pattern.compile(regexpForFailed);
-		BufferedReader reader = new BufferedReader(new FileReader(logFile));
-		while ((line = reader.readLine()) != null) {
-			Matcher matcher = pattern.matcher(line);
-			if (matcher.find()) {
-				if(matcher.groupCount() == 0) {
-					version = matcher.group();
-				} else {					
-					version = matcher.group(1);
-				}
-				return version;
+	private Object readResolve() throws ObjectStreamException {
+		if (explicitNotRegexp) {
+			return new DescriptionSetterPublisher(null, null, regexp, setForFailed ? regexpForFailed : null);
+		} else {
+			return this;
+		}
+	}
+
+	private String getExpandedDescription(Matcher matcher, String description) {
+		String result = description;
+		if (result == null) {
+			if (matcher.groupCount() == 0) {
+				result = "\\0";
+			} else {
+				result = "\\1";
 			}
 		}
-		return null;
+
+		for (int i = matcher.groupCount(); i >= matcher.groupCount(); i--) {
+			result = result.replace("\\" + i, matcher.group(i));
+		}
+		return result;
 	}
 
 	@Extension
-	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+	public static final class DescriptorImpl extends
+			BuildStepDescriptor<Publisher> {
 
 		public DescriptorImpl() {
 			super(DescriptionSetterPublisher.class);
@@ -159,17 +163,19 @@ public class DescriptionSetterPublisher extends Recorder {
 
 	@Override
 	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl)super.getDescriptor();
+		return (DescriptorImpl) super.getDescriptor();
 	}
-    
-    public boolean isExplicitNotRegexp() {
-        return explicitNotRegexp;
+
+	@Deprecated
+	public boolean isExplicitNotRegexp() {
+		return explicitNotRegexp;
 	}
 
 	public String getRegexp() {
 		return regexp;
 	}
 
+	@Deprecated
 	public boolean isSetForFailed() {
 		return setForFailed;
 	}
@@ -177,4 +183,13 @@ public class DescriptionSetterPublisher extends Recorder {
 	public String getRegexpForFailed() {
 		return regexpForFailed;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getDescriptionForFailed() {
+		return descriptionForFailed;
+	}
+
 }
