@@ -13,11 +13,12 @@
 		<f:entry title="Description for failed builds" field="descriptionForFailed">
 			<f:textbox />
 		</f:entry>
-		<j:if test="${descriptor.isMatrixProject(it)}">
-		<f:entry title="Set description on matrix build" field="setForMatrix">
+		<j:if test="${!descriptor.isMatrixProject(it)}">
+			<j:set var="style" value="'visibility:none'"/>
+		</j:if>
+		<f:entry title="Set description on multi-configuration build" field="setForMatrix">
 			<f:checkbox />
 		</f:entry>
-		</j:if>
 	</f:advanced>
 
 </j:jelly>

@@ -193,7 +193,6 @@ public class DescriptionSetterPublisher extends Recorder implements
 		}
 		
 		public boolean isMatrixProject(AbstractProject project) {
-			System.out.println(project);
 			return project instanceof MatrixProject;
 		}
 	}
