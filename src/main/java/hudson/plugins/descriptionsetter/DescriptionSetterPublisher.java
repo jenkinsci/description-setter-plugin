@@ -153,7 +153,8 @@ public class DescriptionSetterPublisher extends Recorder implements
 			}
 		}
 
-		for (int i = matcher.groupCount(); i >= matcher.groupCount(); i--) {
+        // Expand all groups: 1..Count, as well as 0 for the entire pattern
+		for (int i = matcher.groupCount(); i >= 0; i--) {
 			result = result.replace("\\" + i, matcher.group(i));
 		}
 		return result;
@@ -191,7 +192,7 @@ public class DescriptionSetterPublisher extends Recorder implements
 				throws FormException {
 			return req.bindJSON(DescriptionSetterPublisher.class, formData);
 		}
-		
+
 		public boolean isMatrixProject(AbstractProject project) {
 			return project instanceof MatrixProject;
 		}
@@ -234,7 +235,7 @@ public class DescriptionSetterPublisher extends Recorder implements
 		if (!isSetForMatrix()) {
 			return null;
 		}
-		
+
 		return new MatrixAggregator(build, launcher, listener) {
 			@Override
 			public boolean endRun(MatrixRun run) throws InterruptedException,

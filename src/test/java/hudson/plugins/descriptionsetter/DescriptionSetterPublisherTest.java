@@ -47,41 +47,40 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 				Result.SUCCESS, "text (.*)", null, "description \\1", null));
 	}
 
-	public void testFailureWithNoFailureRegex() throws Exception {
+        public void testSuccessConfiguredDescription2() throws Exception {
+		assertEquals("description one two", getDescription("text one two",
+				Result.SUCCESS, "text (\\w+) (\\w+)", null, "description \\1 \\2", null));
+        }
 
+	public void testFailureWithNoFailureRegex() throws Exception {
 		assertEquals("one", getDescription("text one", Result.FAILURE,
 				"text (.*)", null, null, null));
 	}
 
 	public void testFailureWithFailureRegexAndDefaultDescrption() throws Exception {
-
 		assertEquals("text", getDescription("text one", Result.FAILURE,
 				"text (.*)", "(.*) one", null, null));
 	}
 
 	public void testFailureWithFailureRegexAndConfiguredDescription() throws Exception {
-
 		assertEquals("description text", getDescription("text one",
 				Result.FAILURE, "text (.*)", "(.*) one", null,
 				"description \\1"));
 	}
 
 	public void testSuccessWithFixedDescription() throws Exception {
-
 		assertEquals("description success", getDescription("xxx",
 				Result.SUCCESS, null, null, "description success",
 				"description failure"));
 	}
 
 	public void testFailureWithFixedDescription() throws Exception {
-
 		assertEquals("description failure", getDescription("xxx",
 				Result.FAILURE, null, null, "description success",
 				"description failure"));
 	}
 
 	public void testSuccessNoMatch() throws Exception {
-
 		assertEquals(null, getDescription("xxx",
 				Result.SUCCESS, "regex", null, "description success",
 				null));
@@ -92,7 +91,7 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 				Result.SUCCESS, "url:(.*)", null, null,
 				null));
 	}
-	
+
 	private String getDescription(String text, Result result, String regexp,
 			String regexpForFailed, String description,
 			String descriptionForFailed) throws Exception {
