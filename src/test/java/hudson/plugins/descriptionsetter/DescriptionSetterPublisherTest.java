@@ -91,6 +91,20 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 				Result.SUCCESS, "url:(.*)", null, null,
 				null));
 	}
+	
+	public void testNullMatch1() throws Exception {
+		assertEquals("Match=(MatchOne) MatchTwo",
+				getDescription("Prefix: MatchOne MatchTwo", Result.SUCCESS,
+						"^Prefix: (\\S+)( .*)?$", null, 
+						"Match=(\\1)\\2", null));
+	}
+
+	public void testNullMatch2() throws Exception {
+		assertEquals("Match=(MatchOne)",
+				getDescription("Prefix: MatchOne", Result.SUCCESS,
+						"^Prefix: (\\S+)( .*)?$", null,
+						"Match=(\\1)\\2", null));
+	}
 
 	private String getDescription(String text, Result result, String regexp,
 			String regexpForFailed, String description,

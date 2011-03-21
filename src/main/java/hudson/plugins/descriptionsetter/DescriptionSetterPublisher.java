@@ -155,7 +155,8 @@ public class DescriptionSetterPublisher extends Recorder implements
 
         // Expand all groups: 1..Count, as well as 0 for the entire pattern
 		for (int i = matcher.groupCount(); i >= 0; i--) {
-			result = result.replace("\\" + i, matcher.group(i));
+			result = result.replace("\\" + i, 
+					matcher.group(i) == null ? "" : matcher.group(i));
 		}
 		return result;
 	}
