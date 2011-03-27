@@ -7,7 +7,7 @@
   </parent>
   
   <artifactId>description-setter</artifactId>
-  <version>1.8</version>
+  <version>1.9-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Jenkins description setter plugin</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin</url>
