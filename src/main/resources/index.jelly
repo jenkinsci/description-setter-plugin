@@ -1,0 +1,5 @@
+<div>
+  This plugin sets the description for each build, based upon a
+  <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html">RegEx</a>
+  test of the build log file.
+</div>
