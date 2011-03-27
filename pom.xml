@@ -3,15 +3,14 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.357</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>1.398</version>
   </parent>
   
   <artifactId>description-setter</artifactId>
   <version>1.8-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  <name>Hudson description setter plugin</name>
-  <url>http://wiki.hudson-ci.org/display/HUDSON/Description+Setter+Plugin</url>
+  <name>Jenkins description setter plugin</name>
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin</url>
 
   <developers>
     <developer>
@@ -19,4 +18,10 @@
       <name>Tom Huybrechts</name>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/jenkinsci/description-setter-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/description-setter-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/description-setter-plugin</url>
+  </scm>
 </project>
