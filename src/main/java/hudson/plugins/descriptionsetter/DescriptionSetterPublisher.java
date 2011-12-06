@@ -180,7 +180,7 @@ public class DescriptionSetterPublisher extends Recorder implements
 
 		@Override
 		public String getDisplayName() {
-			return "Set build description";
+			return Messages.DescriptionSetter_DisplayName();
 		}
 
 		@Override
