@@ -19,6 +19,11 @@
 		<f:entry title="${%Set description on multi-configuration build}" field="setForMatrix">
 			<f:checkbox />
 		</f:entry>
+                <f:optionalBlock name="setAppend" checked="${instance.setAppend}" title="${%Append description to existing description}" help="${descriptor.getDescriptorFullUrl()}/help/setAppend" inline="true">
+                    <f:entry title="${%Append in a new line}" field="setAppendNewline">
+			<f:checkbox />
+                    </f:entry>
+                </f:optionalBlock>
 	</f:advanced>
 
 </j:jelly>

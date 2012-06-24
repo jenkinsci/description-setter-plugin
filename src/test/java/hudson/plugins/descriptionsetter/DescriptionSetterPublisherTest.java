@@ -113,7 +113,7 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 		project.getBuildersList().add(new MyBuilder(text, result));
 		project.getPublishersList().add(
 				new DescriptionSetterPublisher(regexp, regexpForFailed,
-						description, descriptionForFailed, false));
+						description, descriptionForFailed, false, false, false));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		return build.getDescription();
 	}
