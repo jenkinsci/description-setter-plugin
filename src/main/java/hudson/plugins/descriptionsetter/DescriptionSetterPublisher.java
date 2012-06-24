@@ -41,6 +41,8 @@ public class DescriptionSetterPublisher extends Recorder implements
 
 	private final String descriptionForFailed;
 	private final boolean setForMatrix;
+        private final boolean setAppend;
+        private final boolean setAppendNewline;
 
 	@Deprecated
 	private transient boolean setForFailed = false;
@@ -51,12 +53,15 @@ public class DescriptionSetterPublisher extends Recorder implements
 	@DataBoundConstructor
 	public DescriptionSetterPublisher(String regexp, String regexpForFailed,
 			String description, String descriptionForFailed,
-			boolean setForMatrix) {
+			boolean setForMatrix, boolean setAppend, boolean setAppendNewline) {
+
 		this.regexp = regexp;
 		this.regexpForFailed = regexpForFailed;
 		this.description = Util.fixEmptyAndTrim(description);
 		this.descriptionForFailed = Util.fixEmptyAndTrim(descriptionForFailed);
 		this.setForMatrix = setForMatrix;
+                this.setAppend = setAppend;
+                this.setAppendNewline = setAppendNewline;
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
@@ -104,8 +109,20 @@ public class DescriptionSetterPublisher extends Recorder implements
 			result = urlify(result);
 
 			build.addAction(new DescriptionSetterAction(result));
-			listener.getLogger().println("Description set: " + result);
-			build.setDescription(result);
+
+                        if (isSetAppend()) {
+                            String oldDescription = build.getDescription();
+                            if (oldDescription != null) {
+                                if (isSetAppendNewline()) {
+                                    result = oldDescription + "<br />" + result;
+                                } else {
+                                    result = oldDescription + result;
+                                }
+                            }
+                        }
+
+                        listener.getLogger().println("Description set: " + result);
+                        build.setDescription(result);;
 		} catch (IOException e) {
 			e.printStackTrace(listener
 					.error("error while parsing logs for description-setter"));
@@ -137,7 +154,7 @@ public class DescriptionSetterPublisher extends Recorder implements
 	private Object readResolve() throws ObjectStreamException {
 		if (explicitNotRegexp) {
 			return new DescriptionSetterPublisher(null, null, regexp,
-					setForFailed ? regexpForFailed : null, false);
+					setForFailed ? regexpForFailed : null, false, false, false);
 		} else {
 			return this;
 		}
@@ -254,4 +271,11 @@ public class DescriptionSetterPublisher extends Recorder implements
 		return setForMatrix;
 	}
 
+        public boolean isSetAppend() {
+                return setAppend;
+        }
+
+        public boolean isSetAppendNewline() {
+                return setAppendNewline;
+        }
 }
