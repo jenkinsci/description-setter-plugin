@@ -1,41 +1,12 @@
 package hudson.plugins.descriptionsetter;
 
-import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
 import hudson.model.Result;
-import hudson.tasks.Builder;
-
-import java.io.IOException;
-import java.io.Serializable;
+import hudson.model.FreeStyleProject;
 
 import org.jvnet.hudson.test.HudsonTestCase;
 
-import static org.junit.Assert.*;
-
 public class DescriptionSetterPublisherTest extends HudsonTestCase {
-
-	private static final class MyBuilder extends Builder {
-		private final String text;
-		private final Result result;
-
-		public MyBuilder(String text, Result result) {
-			super();
-			this.text = text;
-			this.result = result;
-		}
-
-		@Override
-		public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
-				BuildListener listener) throws InterruptedException,
-				IOException {
-			listener.getLogger().println(text);
-			build.setResult(result);
-			return true;
-		}
-	}
 
 	public void testSuccessDefaultDescription() throws Exception {
 		assertEquals("one", getDescription("text one", Result.SUCCESS,
@@ -110,7 +81,7 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 			String regexpForFailed, String description,
 			String descriptionForFailed) throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
-		project.getBuildersList().add(new MyBuilder(text, result));
+		project.getBuildersList().add(new TestBuilder(text, result));
 		project.getPublishersList().add(
 				new DescriptionSetterPublisher(regexp, regexpForFailed,
 						description, descriptionForFailed, false));

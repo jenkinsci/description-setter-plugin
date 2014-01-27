@@ -5,33 +5,31 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.matrix.MatrixAggregatable;
 import hudson.matrix.MatrixAggregator;
+import hudson.matrix.MatrixRun;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
-import hudson.matrix.MatrixRun;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectStreamException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+/**
+ * The DescriptionSetterPublisher allows the description of a build to be set as
+ * a post-build action, after the build has completed.
+ * 
+ */
 public class DescriptionSetterPublisher extends Recorder implements
 		MatrixAggregatable {
 
@@ -67,71 +65,11 @@ public class DescriptionSetterPublisher extends Recorder implements
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException {
 
-		try {
-			Matcher matcher;
-			String result = null;
-
-			boolean useUnstable = (regexpForFailed != null || descriptionForFailed != null)
-					&& build.getResult().isWorseThan(Result.UNSTABLE);
-
-			matcher = parseLog(build.getLogFile(),
-					useUnstable ? regexpForFailed : regexp);
-			if (matcher != null) {
-				result = getExpandedDescription(matcher,
-						useUnstable ? descriptionForFailed : description);
-				result = build.getEnvironment(listener).expand(result);
-			} else {
-				if (useUnstable) {
-					if (result == null && regexpForFailed == null
-							&& descriptionForFailed != null) {
-						result = descriptionForFailed;
-					}
-				} else {
-					if (result == null && regexp == null && description != null) {
-						result = description;
-					}
-				}
-			}
-
-			if (result == null) {
-				listener
-						.getLogger()
-						.println(
-								"[description-setter] Could not determine description.");
-				return true;
-			}
-
-			result = urlify(result);
-
-			build.addAction(new DescriptionSetterAction(result));
-			listener.getLogger().println("Description set: " + result);
-			build.setDescription(result);
-		} catch (IOException e) {
-			e.printStackTrace(listener
-					.error("error while parsing logs for description-setter"));
-		}
-
-		return true;
-	}
-
-	private Matcher parseLog(File logFile, String regexp) throws IOException,
-			InterruptedException {
-
-		if (regexp == null) {
-			return null;
-		}
-
-		// Assume default encoding and text files
-		String line;
-		Pattern pattern = Pattern.compile(regexp);
-		BufferedReader reader = new BufferedReader(new FileReader(logFile));
-		while ((line = reader.readLine()) != null) {
-			Matcher matcher = pattern.matcher(line);
-			if (matcher.find()) {
-				return matcher;
-			}
-		}
-		return null;
+		boolean useUnstable = (regexpForFailed != null || descriptionForFailed != null)
+				&& build.getResult().isWorseThan(Result.UNSTABLE);
+		return DescriptionSetterHelper.setDescription(build, listener,
+				useUnstable ? regexpForFailed : regexp,
+				useUnstable ? descriptionForFailed : description);
 	}
 
 	private Object readResolve() throws ObjectStreamException {
@@ -140,33 +78,6 @@ public class DescriptionSetterPublisher extends Recorder implements
 					setForFailed ? regexpForFailed : null, false);
 		} else {
 			return this;
-		}
-	}
-
-	private String getExpandedDescription(Matcher matcher, String description) {
-		String result = description;
-		if (result == null) {
-			if (matcher.groupCount() == 0) {
-				result = "\\0";
-			} else {
-				result = "\\1";
-			}
-		}
-
-        // Expand all groups: 1..Count, as well as 0 for the entire pattern
-		for (int i = matcher.groupCount(); i >= 0; i--) {
-			result = result.replace("\\" + i, 
-					matcher.group(i) == null ? "" : matcher.group(i));
-		}
-		return result;
-	}
-
-	private String urlify(String text) {
-		try {
-			new URL(text);
-			return String.format("<a href=\"%s\">%s</a>", text, text);
-		} catch (MalformedURLException e) {
-			return text;
 		}
 	}
 
