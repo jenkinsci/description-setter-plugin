@@ -2,6 +2,8 @@ package hudson.plugins.descriptionsetter;
 
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
+import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
+import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,7 +49,11 @@ public class DescriptionSetterHelper {
 				result = build.getEnvironment(listener).expand(result);
 			} else {
 				if (result == null && regexp == null && description != null) {
-					result = description;
+                    try {
+                        result = TokenMacro.expandAll(build, listener, description);
+                    } catch (MacroEvaluationException e) {
+                        listener.getLogger().println(e.getMessage());
+                    }
 				}
 			}
 

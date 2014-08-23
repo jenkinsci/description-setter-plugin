@@ -18,10 +18,10 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 				Result.SUCCESS, "text (.*)", null, "description \\1", null));
 	}
 
-        public void testSuccessConfiguredDescription2() throws Exception {
-		assertEquals("description one two", getDescription("text one two",
-				Result.SUCCESS, "text (\\w+) (\\w+)", null, "description \\1 \\2", null));
-        }
+    public void testSuccessConfiguredDescription2() throws Exception {
+        assertEquals("description one two", getDescription("text one two",
+            Result.SUCCESS, "text (\\w+) (\\w+)", null, "description \\1 \\2", null));
+    }
 
 	public void testFailureWithNoFailureRegex() throws Exception {
 		assertEquals("one", getDescription("text one", Result.FAILURE,
@@ -50,6 +50,38 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 				Result.FAILURE, null, null, "description success",
 				"description failure"));
 	}
+
+    public void testSuccessWithValidTokenMacro() throws Exception {
+        FreeStyleProject fooProject = createFreeStyleProject("foo");
+        fooProject.scheduleBuild2(0).get();
+
+        assertEquals("#1", getDescription("xxx",
+                Result.SUCCESS, null, null, "#${BUILD_NUMBER}", null));
+    }
+
+    public void testSuccessWithInvalidTokenMacro() throws Exception {
+        FreeStyleProject fooProject = createFreeStyleProject("foo");
+        fooProject.scheduleBuild2(0).get();
+
+        assertEquals(null, getDescription("xxx",
+                Result.SUCCESS, null, null, "${xxx}", null));
+    }
+
+    public void testFailureWithValidTokenMacro() throws Exception {
+        FreeStyleProject fooProject = createFreeStyleProject("foo");
+        fooProject.scheduleBuild2(0).get();
+
+        assertEquals("#1", getDescription("xxx",
+                Result.FAILURE, null, null, null, "#${BUILD_NUMBER}"));
+    }
+
+    public void testFailureWithInvalidTokenMacro() throws Exception {
+        FreeStyleProject fooProject = createFreeStyleProject("foo");
+        fooProject.scheduleBuild2(0).get();
+
+        assertEquals(null, getDescription("xxx",
+                Result.FAILURE, null, null, null, "${xxx}"));
+    }
 
 	public void testSuccessNoMatch() throws Exception {
 		assertEquals(null, getDescription("xxx",
