@@ -39,6 +39,26 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
 						"description success"));
 	}
 
+    public void testSuccessWithValidTokenMacro() throws Exception {
+        FreeStyleProject fooProject = createFreeStyleProject("foo");
+        fooProject.scheduleBuild2(0).get();
+
+        assertEquals(
+                "#1",
+                getDescription("xxx", Result.SUCCESS, null,
+                        "#${BUILD_NUMBER}"));
+    }
+
+    public void testSuccessWithInvalidTokenMacro() throws Exception {
+        FreeStyleProject fooProject = createFreeStyleProject("foo");
+        fooProject.scheduleBuild2(0).get();
+
+        assertEquals(
+                null,
+                getDescription("xxx", Result.SUCCESS, null,
+                        "${xxx}"));
+    }
+
 	public void testSuccessNoMatch() throws Exception {
 		assertEquals(
 				null,

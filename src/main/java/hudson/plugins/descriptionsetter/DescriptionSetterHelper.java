@@ -2,6 +2,8 @@ package hudson.plugins.descriptionsetter;
 
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
+import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,8 +48,16 @@ public class DescriptionSetterHelper {
 				result = getExpandedDescription(matcher, description);
 				result = build.getEnvironment(listener).expand(result);
 			} else {
-				if (result == null && regexp == null && description != null) {
-					result = description;
+				if (result == null && (regexp == null || regexp.isEmpty()) && description != null) {
+                    if (Jenkins.getInstance().getPlugin("token-macro") != null) {
+                        try {
+                            result = TokenMacro.expandAll(build, listener, description);
+                        } catch (Exception e) {
+                            listener.getLogger().println(e.getMessage());
+                        }
+                    } else
+                        result = description;
+                        listener.getLogger().print("Macros cannot be expanded as Token Macro Plugin is not installed. Please install the Token Macro plugin to use macros.");
 				}
 			}
 
@@ -73,7 +83,7 @@ public class DescriptionSetterHelper {
 	private static Matcher parseLog(File logFile, String regexp)
 			throws IOException, InterruptedException {
 
-		if (regexp == null) {
+		if (regexp == null || regexp.isEmpty()) {
 			return null;
 		}
 
