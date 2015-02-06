@@ -83,11 +83,15 @@ public class DescriptionSetterHelper {
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new FileReader(logFile));
+			String logContent = "";
+
 			while ((line = reader.readLine()) != null) {
-				Matcher matcher = pattern.matcher(line);
-				if (matcher.find()) {
-					return matcher;
-				}
+				logContent += line + "\n";
+			}
+
+			Matcher matcher = pattern.matcher(logContent);
+			if (matcher.find()) {
+				return matcher;
 			}
 		} finally {
 			if (reader != null) {
