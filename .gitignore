@@ -1,2 +1,6 @@
 description-setter.iml
 target/
+work/
+.project
+.classpath
+.settings

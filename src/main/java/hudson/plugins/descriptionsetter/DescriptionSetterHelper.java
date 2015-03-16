@@ -60,7 +60,17 @@ public class DescriptionSetterHelper {
 			result = urlify(result);
 
 			build.addAction(new DescriptionSetterAction(result));
-			build.setDescription(result);
+			if(build.getDescription() == null)
+			{
+				build.setDescription(result);
+			}
+			else
+			{
+				String oldDescr = build.getDescription();
+				String newDescr = oldDescr + "<br />" + result;
+				build.setDescription(newDescr);
+			}
+			
 			listener.getLogger().println(LOG_PREFIX + " Description set: " + result);
 		} catch (IOException e) {
 			e.printStackTrace(listener.error(LOG_PREFIX
