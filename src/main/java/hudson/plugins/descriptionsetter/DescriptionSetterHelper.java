@@ -1,7 +1,11 @@
 package hudson.plugins.descriptionsetter;
 
+import hudson.EnvVars;
 import hudson.model.BuildListener;
+import hudson.model.ParameterValue;
 import hudson.model.AbstractBuild;
+import hudson.model.ParametersAction;
+import hudson.model.StringParameterValue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,6 +13,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,7 +76,9 @@ public class DescriptionSetterHelper {
 				String newDescr = oldDescr + "<br />" + result;
 				build.setDescription(newDescr);
 			}
-			
+
+			setEnvironmentVariable(result, build);
+
 			listener.getLogger().println(LOG_PREFIX + " Description set: " + result);
 		} catch (IOException e) {
 			e.printStackTrace(listener.error(LOG_PREFIX
@@ -78,6 +86,13 @@ public class DescriptionSetterHelper {
 		}
 
 		return true;
+	}
+	
+	private static void setEnvironmentVariable(String result, AbstractBuild<?, ?> build)
+	{
+		List<ParameterValue> params = new ArrayList<ParameterValue>();
+		params.add(new StringParameterValue("DESCRIPTION_SETTER_DESCRIPTION", result));
+		build.addAction(new ParametersAction(params));
 	}
 
 	private static Matcher parseLog(File logFile, String regexp)
