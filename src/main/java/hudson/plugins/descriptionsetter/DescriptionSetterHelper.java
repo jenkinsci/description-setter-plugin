@@ -1,11 +1,10 @@
 package hudson.plugins.descriptionsetter;
 
-import hudson.EnvVars;
-import hudson.model.BuildListener;
 import hudson.model.ParameterValue;
-import hudson.model.AbstractBuild;
 import hudson.model.ParametersAction;
+import hudson.model.Run;
 import hudson.model.StringParameterValue;
+import hudson.model.TaskListener;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,12 +34,10 @@ public class DescriptionSetterHelper {
 	 * @param listener the build listener to report events to.
 	 * @param regexp the regular expression to apply to the build log.
 	 * @param description the description to set.
-	 * @return true, regardless of if the regular expression matched and a
-	 *         description could be set or not.
 	 * @throws InterruptedException if the build is interrupted by the user.
 	 */
-	public static boolean setDescription(AbstractBuild<?, ?> build,
-			BuildListener listener, String regexp, String description)
+	public static void setDescription(Run<?, ?> build,
+			TaskListener listener, String regexp, String description)
 			throws InterruptedException {
 
 		try {
@@ -60,7 +57,7 @@ public class DescriptionSetterHelper {
 			if (result == null) {
 				listener.getLogger().println(
 						LOG_PREFIX + " Could not determine description.");
-				return true;
+				return;
 			}
 
 			result = urlify(result);
@@ -84,11 +81,9 @@ public class DescriptionSetterHelper {
 			e.printStackTrace(listener.error(LOG_PREFIX
 					+ " Error while parsing logs for description-setter"));
 		}
-
-		return true;
 	}
 	
-	private static void setEnvironmentVariable(String result, AbstractBuild<?, ?> build)
+	private static void setEnvironmentVariable(String result, Run<?, ?> build)
 	{
 		List<ParameterValue> params = new ArrayList<ParameterValue>();
 		params.add(new StringParameterValue("DESCRIPTION_SETTER_DESCRIPTION", result));
