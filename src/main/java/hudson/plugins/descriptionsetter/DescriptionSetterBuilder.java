@@ -34,8 +34,9 @@ public class DescriptionSetterBuilder extends Builder {
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException {
 
-		return DescriptionSetterHelper.setDescription(build, listener, regexp,
+		DescriptionSetterHelper.setDescription(build, listener, regexp,
 				description);
+		return true;
 	}
 
 	@Extension

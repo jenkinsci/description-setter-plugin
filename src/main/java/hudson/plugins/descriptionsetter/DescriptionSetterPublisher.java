@@ -1,29 +1,31 @@
 package hudson.plugins.descriptionsetter;
 
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.matrix.MatrixAggregatable;
 import hudson.matrix.MatrixAggregator;
-import hudson.matrix.MatrixRun;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
-import hudson.model.BuildListener;
-import hudson.model.Result;
+import hudson.matrix.MatrixRun;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
+import jenkins.tasks.SimpleBuildStep;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
 import java.io.ObjectStreamException;
-
-import net.sf.json.JSONObject;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * The DescriptionSetterPublisher allows the description of a build to be set as
@@ -31,7 +33,7 @@ import org.kohsuke.stapler.StaplerRequest;
  * 
  */
 public class DescriptionSetterPublisher extends Recorder implements
-		MatrixAggregatable {
+		MatrixAggregatable, SimpleBuildStep {
 
 	private final String regexp;
 	private final String regexpForFailed;
@@ -62,14 +64,23 @@ public class DescriptionSetterPublisher extends Recorder implements
 	}
 
 	@Override
-	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
-			BuildListener listener) throws InterruptedException {
-
+	public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
 		boolean useUnstable = (regexpForFailed != null || descriptionForFailed != null)
-				&& build.getResult().isWorseThan(Result.UNSTABLE);
-		return DescriptionSetterHelper.setDescription(build, listener,
+				&& run.getResult().isWorseThan(Result.UNSTABLE);
+		DescriptionSetterHelper.setDescription(run, listener,
 				useUnstable ? regexpForFailed : regexp,
 				useUnstable ? descriptionForFailed : description);
+	}
+
+	@Override
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
+			BuildListener listener) throws InterruptedException {
+		try {
+			perform(build, null, launcher, listener);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return true;
 	}
 
 	private Object readResolve() throws ObjectStreamException {
