@@ -27,7 +27,6 @@
     <connection>scm:git:git://github.com/jenkinsci/description-setter-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/description-setter-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/description-setter-plugin</url>
-    <tag>HEAD</tag>
   </scm>
 
     <repositories>
