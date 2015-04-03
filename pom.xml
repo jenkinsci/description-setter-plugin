@@ -14,6 +14,10 @@
 
   <developers>
     <developer>
+       <id>michael1010</id>
+       <name>Michael</name>
+    </developer>
+    <developer>
       <id>huybrechts</id>
       <name>Tom Huybrechts</name>
     </developer>
