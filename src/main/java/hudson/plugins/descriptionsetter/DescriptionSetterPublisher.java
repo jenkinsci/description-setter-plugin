@@ -39,6 +39,7 @@ public class DescriptionSetterPublisher extends Recorder implements
 
 	private final String descriptionForFailed;
 	private final boolean setForMatrix;
+	private final boolean appendMode;
 
 	@Deprecated
 	private transient boolean setForFailed = false;
@@ -49,12 +50,13 @@ public class DescriptionSetterPublisher extends Recorder implements
 	@DataBoundConstructor
 	public DescriptionSetterPublisher(String regexp, String regexpForFailed,
 			String description, String descriptionForFailed,
-			boolean setForMatrix) {
+			boolean setForMatrix, boolean appendMode) {
 		this.regexp = regexp;
 		this.regexpForFailed = regexpForFailed;
 		this.description = Util.fixEmptyAndTrim(description);
 		this.descriptionForFailed = Util.fixEmptyAndTrim(descriptionForFailed);
 		this.setForMatrix = setForMatrix;
+		this.appendMode = appendMode;
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
@@ -69,13 +71,14 @@ public class DescriptionSetterPublisher extends Recorder implements
 				&& build.getResult().isWorseThan(Result.UNSTABLE);
 		return DescriptionSetterHelper.setDescription(build, listener,
 				useUnstable ? regexpForFailed : regexp,
-				useUnstable ? descriptionForFailed : description);
+				useUnstable ? descriptionForFailed : description,
+				appendMode);
 	}
 
 	private Object readResolve() throws ObjectStreamException {
 		if (explicitNotRegexp) {
 			return new DescriptionSetterPublisher(null, null, regexp,
-					setForFailed ? regexpForFailed : null, false);
+					setForFailed ? regexpForFailed : null, false, false);
 		} else {
 			return this;
 		}
@@ -152,6 +155,7 @@ public class DescriptionSetterPublisher extends Recorder implements
 			@Override
 			public boolean endRun(MatrixRun run) throws InterruptedException,
 					IOException {
+
 				if (build.getDescription() == null
 						&& run.getDescription() != null) {
 					build.setDescription(run.getDescription());
@@ -170,5 +174,7 @@ public class DescriptionSetterPublisher extends Recorder implements
 	public boolean isSetForMatrix() {
 		return setForMatrix;
 	}
+
+	public boolean isAppendMode() { return appendMode; }
 
 }

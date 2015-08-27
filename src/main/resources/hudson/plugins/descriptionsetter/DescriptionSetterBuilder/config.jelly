@@ -6,4 +6,7 @@
 	<f:entry title="${%Description}" field="description">
 		<f:textbox />
 	</f:entry>
+	<f:entry title="${%Append to description instead of resetting it}" field="appendMode">
+		<f:checkbox />
+	</f:entry>
 </j:jelly>
