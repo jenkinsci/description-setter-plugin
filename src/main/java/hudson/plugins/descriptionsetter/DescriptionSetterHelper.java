@@ -1,6 +1,5 @@
 package hudson.plugins.descriptionsetter;
 
-import hudson.EnvVars;
 import hudson.model.BuildListener;
 import hudson.model.ParameterValue;
 import hudson.model.AbstractBuild;
@@ -30,7 +29,7 @@ public class DescriptionSetterHelper {
 	/**
 	 * Sets the description on the given build based on the specified regular
 	 * expression and description.
-	 * 
+	 *
 	 * @param build the build whose description to set.
 	 * @param listener the build listener to report events to.
 	 * @param regexp the regular expression to apply to the build log.
@@ -42,7 +41,25 @@ public class DescriptionSetterHelper {
 	public static boolean setDescription(AbstractBuild<?, ?> build,
 			BuildListener listener, String regexp, String description)
 			throws InterruptedException {
+		return setDescription(build, listener, regexp, description, true);
+	}
 
+	/**
+	 * Sets the description on the given build based on the specified regular
+	 * expression and description.
+	 * 
+	 * @param build the build whose description to set.
+	 * @param listener the build listener to report events to.
+	 * @param regexp the regular expression to apply to the build log.
+	 * @param description the description to set.
+	 * @param appendMode if true, description is added to the current one
+	 * @return true, regardless of if the regular expression matched and a
+	 *         description could be set or not.
+	 * @throws InterruptedException if the build is interrupted by the user.
+	 */
+	public static boolean setDescription(AbstractBuild<?, ?> build,
+			BuildListener listener, String regexp, String description, boolean appendMode)
+			throws InterruptedException {
 		try {
 			Matcher matcher;
 			String result = null;
@@ -67,15 +84,9 @@ public class DescriptionSetterHelper {
 
 			build.addAction(new DescriptionSetterAction(result));
 			if(build.getDescription() == null)
-			{
 				build.setDescription(result);
-			}
 			else
-			{
-				String oldDescr = build.getDescription();
-				String newDescr = oldDescr + "<br />" + result;
-				build.setDescription(newDescr);
-			}
+				build.setDescription((appendMode ? build.getDescription() + "<br />" : "") + result);
 
 			setEnvironmentVariable(result, build);
 

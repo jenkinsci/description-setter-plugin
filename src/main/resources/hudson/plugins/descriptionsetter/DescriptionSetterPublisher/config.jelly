@@ -18,6 +18,9 @@
 				<f:checkbox />
 			</f:entry>
 		</j:if>
+		<f:entry title="${%Append to description instead of resetting it}" field="appendMode">
+			<f:checkbox />
+		</f:entry>
 	</f:advanced>
 
 </j:jelly>

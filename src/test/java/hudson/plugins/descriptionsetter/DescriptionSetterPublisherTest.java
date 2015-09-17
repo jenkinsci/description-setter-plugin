@@ -77,16 +77,39 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 						"Match=(\\1)\\2", null));
 	}
 
+	public void testAppendDescriptionInPublisher() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test2", build.getDescription());
+	}
+
+	public void testRewriteDescriptionInPublisher() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test2", build.getDescription());
+	}
+
 	private String getDescription(String text, Result result, String regexp,
 			String regexpForFailed, String description,
-			String descriptionForFailed) throws Exception {
+			String descriptionForFailed, boolean appendMode) throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
 		project.getBuildersList().add(new TestBuilder(text, result));
 		project.getPublishersList().add(
 				new DescriptionSetterPublisher(regexp, regexpForFailed,
-						description, descriptionForFailed, false));
+						description, descriptionForFailed, false, appendMode));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		return build.getDescription();
 	}
 
+	private String getDescription(String text, Result result, String regexp,
+								  String regexpForFailed, String description,
+								  String descriptionForFailed) throws Exception {
+		return getDescription(text, result, regexp, regexpForFailed, description, descriptionForFailed, true);
+	}
 }

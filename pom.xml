@@ -13,14 +13,18 @@
   <url>http://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin</url>
 
   <developers>
-    <developer>
-       <id>michael1010</id>
-       <name>Michael</name>
-    </developer>
-    <developer>
-      <id>huybrechts</id>
-      <name>Tom Huybrechts</name>
-    </developer>
+      <developer>
+          <id>michael1010</id>
+          <name>Michael</name>
+      </developer>
+      <developer>
+          <id>huybrechts</id>
+          <name>Tom Huybrechts</name>
+      </developer>
+      <developer>
+          <id>pjanouse</id>
+          <name>Pavel Janousek</name>
+      </developer>
   </developers>
 
   <scm>
