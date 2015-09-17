@@ -77,39 +77,296 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 						"Match=(\\1)\\2", null));
 	}
 
-	public void testAppendDescriptionInPublisher() throws Exception {
+	public void testDescriptionInPublisherDefaultBehavior() throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
 		project.getPublishersList().add(
-				new DescriptionSetterPublisher("", "", "test2", "", false, true));
+				new DescriptionSetterPublisher("", "", "test1", "", false, false, false));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
-		assertEquals("test1<br />test2", build.getDescription());
+		assertEquals("test1", build.getDescription());
 	}
 
-	public void testRewriteDescriptionInPublisher() throws Exception {
+	public void testDescriptionInPublisherAppendBehavior() throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
 		project.getPublishersList().add(
-				new DescriptionSetterPublisher("", "", "test2", "", false, false));
+				new DescriptionSetterPublisher("", "", "test1", "", false, true, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testDescriptionInPublisherUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, false, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testDescriptionInPublisherAppendAndUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, true, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testTheSameDescriptionInBuilderAndPublisherDefaultBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, false, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testTheSameDescriptionInBuilderAndPublisherAppendBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, true, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test1", build.getDescription());
+	}
+
+	public void testTheSameDescriptionInBuilderAndPublisherUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, false, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testTheSameDescriptionInBuilderAndPublisherAppendAndUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, true, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testDifferentDescriptionInBuilderAndPublisherDefaultBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, false, false));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		assertEquals("test2", build.getDescription());
 	}
 
+	public void testDifferentDescriptionInBuilderAndPublisherAppendBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, true, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test2", build.getDescription());
+	}
+
+	public void testDifferentDescriptionInBuilderAndPublisherUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, false, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test2", build.getDescription());
+	}
+
+	public void testDifferentDescriptionInBuilderAndPublisherAppendAndUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, true, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test2", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousTheSameDescriptionAndAddAlreadyExistedDescriptionInPublisherDefaultBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, false, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousTheSameDescriptionAndAddAlreadyExistedDescriptionInPublisherAppendBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, true, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test1<br />test1", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousTheSameDescriptionAndAddAlreadyExistedDescriptionInPublisherUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, false, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousTheSameDescriptionAndAddAlreadyExistedDescriptionInPublisherAppendAndUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, true, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test1", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousTheSameDescriptionAndAddANewDescriptionInPublisherDefaultBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, false, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test2", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousTheSameDescriptionAndAddANewDescriptionInPublisherAppendBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, true, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test1<br />test2", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousTheSameDescriptionAndAddANewDescriptionInPublisherUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, false, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test2", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousTheSameDescriptionAndAddANewDescriptionInPublisherAppendAndUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, true, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test1<br />test2", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousDifferentDescriptionAndAddAlreadyExistedDescriptionInPublisherDefaultBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, false, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousDifferentDescriptionAndAddAlreadyExistedDescriptionInPublisherAppendBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, true, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test2<br />test1", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousDifferentDescriptionAndAddAlreadyExistedDescriptionInPublisherUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, false, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousDifferentDescriptionAndAddAlreadyExistedDescriptionInPublisherAppendAndUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test1", "", false, true, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test2", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousDifferentDescriptionAndAddANewDescriptionInPublisherDefaultBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test3", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, false, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test2", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousDifferentDescriptionAndAddANewDescriptionInPublisherAppendBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test3", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, true, false));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test3<br />test2", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousDifferentDescriptionAndAddANewDescriptionInPublisherUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test3", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, false, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test2", build.getDescription());
+	}
+
+	public void testDoNotTouchPreviousDifferentDescriptionAndAddANewDescriptionInPublisherAppendAndUniquenessBehavior() throws Exception {
+		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test3", true, false));
+		project.getPublishersList().add(
+				new DescriptionSetterPublisher("", "", "test2", "", false, true, true));
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		assertEquals("test1<br />test3<br />test2", build.getDescription());
+	}
+
 	private String getDescription(String text, Result result, String regexp,
-			String regexpForFailed, String description,
-			String descriptionForFailed, boolean appendMode) throws Exception {
+		String regexpForFailed, String description,
+		String descriptionForFailed, boolean appendMode, boolean unique) throws Exception {
+
 		FreeStyleProject project = createFreeStyleProject();
 		project.getBuildersList().add(new TestBuilder(text, result));
 		project.getPublishersList().add(
 				new DescriptionSetterPublisher(regexp, regexpForFailed,
-						description, descriptionForFailed, false, appendMode));
+						description, descriptionForFailed, false, appendMode, unique));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		return build.getDescription();
 	}
 
 	private String getDescription(String text, Result result, String regexp,
-								  String regexpForFailed, String description,
-								  String descriptionForFailed) throws Exception {
-		return getDescription(text, result, regexp, regexpForFailed, description, descriptionForFailed, true);
+			String regexpForFailed, String description,
+			String descriptionForFailed) throws Exception {
+		return getDescription(text, result, regexp, regexpForFailed, description,
+			descriptionForFailed, true);
 	}
+
+	private String getDescription(String text, Result result, String regexp,
+			String regexpForFailed, String description,
+			String descriptionForFailed, boolean appendMode) throws Exception {
+		return getDescription(text, result, regexp, regexpForFailed, description,
+			descriptionForFailed, true, false);
+
+	}
+
 }

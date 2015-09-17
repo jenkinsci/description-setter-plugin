@@ -11,7 +11,6 @@ import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.model.Run;
-import hudson.model.Descriptor.FormException;
 
 public class JobByDescription extends JobProperty<Job<?,?>>{
 
@@ -75,8 +74,7 @@ public class JobByDescription extends JobProperty<Job<?,?>>{
 	    	
 	    	return null;
 	    }
-		
-		
+
 	}
 
 }

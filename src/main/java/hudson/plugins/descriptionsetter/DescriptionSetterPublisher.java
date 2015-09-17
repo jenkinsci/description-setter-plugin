@@ -40,6 +40,7 @@ public class DescriptionSetterPublisher extends Recorder implements
 	private final String descriptionForFailed;
 	private final boolean setForMatrix;
 	private final boolean appendMode;
+	private final boolean unique;
 
 	@Deprecated
 	private transient boolean setForFailed = false;
@@ -50,13 +51,14 @@ public class DescriptionSetterPublisher extends Recorder implements
 	@DataBoundConstructor
 	public DescriptionSetterPublisher(String regexp, String regexpForFailed,
 			String description, String descriptionForFailed,
-			boolean setForMatrix, boolean appendMode) {
+			boolean setForMatrix, boolean appendMode, boolean unique) {
 		this.regexp = regexp;
 		this.regexpForFailed = regexpForFailed;
 		this.description = Util.fixEmptyAndTrim(description);
 		this.descriptionForFailed = Util.fixEmptyAndTrim(descriptionForFailed);
 		this.setForMatrix = setForMatrix;
 		this.appendMode = appendMode;
+		this.unique = unique;
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
@@ -72,13 +74,13 @@ public class DescriptionSetterPublisher extends Recorder implements
 		return DescriptionSetterHelper.setDescription(build, listener,
 				useUnstable ? regexpForFailed : regexp,
 				useUnstable ? descriptionForFailed : description,
-				appendMode);
+				appendMode, unique);
 	}
 
 	private Object readResolve() throws ObjectStreamException {
 		if (explicitNotRegexp) {
 			return new DescriptionSetterPublisher(null, null, regexp,
-					setForFailed ? regexpForFailed : null, false, false);
+					setForFailed ? regexpForFailed : null, false, false, false);
 		} else {
 			return this;
 		}
@@ -156,15 +158,11 @@ public class DescriptionSetterPublisher extends Recorder implements
 			public boolean endRun(MatrixRun run) throws InterruptedException,
 					IOException {
 
-				if (build.getDescription() == null
-						&& run.getDescription() != null) {
+				if (build.getDescription() == null && run.getDescription() != null) {
 					build.setDescription(run.getDescription());
 				}
-				else if(build.getDescription() != null && run.getDescription() != null)
-				{
-					String oldDescr = build.getDescription();
-					String newDescr = oldDescr + "<br />" + run.getDescription();
-					build.setDescription(newDescr);
+				else if(build.getDescription() != null && run.getDescription() != null) {
+					DescriptionSetterHelper.appendDescription(build, run.getDescription(), unique);
 				}
 				return true;
 			}
@@ -176,5 +174,7 @@ public class DescriptionSetterPublisher extends Recorder implements
 	}
 
 	public boolean isAppendMode() { return appendMode; }
+
+	public boolean isUnique() { return unique; }
 
 }

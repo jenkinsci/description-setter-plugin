@@ -9,4 +9,7 @@
 	<f:entry title="${%Append to description instead of resetting it}" field="appendMode">
 		<f:checkbox />
 	</f:entry>
+	<f:entry title="${%Append only an unique description}" field="unique">
+   		<f:checkbox />
+   	</f:entry>
 </j:jelly>

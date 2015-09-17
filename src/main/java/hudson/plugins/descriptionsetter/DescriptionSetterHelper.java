@@ -12,8 +12,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,7 +48,7 @@ public class DescriptionSetterHelper {
 	/**
 	 * Sets the description on the given build based on the specified regular
 	 * expression and description.
-	 * 
+	 *
 	 * @param build the build whose description to set.
 	 * @param listener the build listener to report events to.
 	 * @param regexp the regular expression to apply to the build log.
@@ -58,7 +59,29 @@ public class DescriptionSetterHelper {
 	 * @throws InterruptedException if the build is interrupted by the user.
 	 */
 	public static boolean setDescription(AbstractBuild<?, ?> build,
-			BuildListener listener, String regexp, String description, boolean appendMode)
+										 BuildListener listener, String regexp, String description,
+										 boolean appendMode)
+			throws InterruptedException {
+		return setDescription(build, listener, regexp, description, true, false);
+	}
+
+	/**
+	 * Sets the description on the given build based on the specified regular
+	 * expression and description.
+	 * 
+	 * @param build the build whose description to set.
+	 * @param listener the build listener to report events to.
+	 * @param regexp the regular expression to apply to the build log.
+	 * @param description the description to set.
+	 * @param appendMode if true, description is added to the current one
+	 * @param unique if true, append only a new unique description (by its content)
+	 * @return true, regardless of if the regular expression matched and a
+	 *         description could be set or not.
+	 * @throws InterruptedException if the build is interrupted by the user.
+	 */
+	public static boolean setDescription(AbstractBuild<?, ?> build,
+			BuildListener listener, String regexp, String description,
+			boolean appendMode, boolean unique)
 			throws InterruptedException {
 		try {
 			Matcher matcher;
@@ -68,10 +91,8 @@ public class DescriptionSetterHelper {
 			if (matcher != null) {
 				result = getExpandedDescription(matcher, description);
 				result = build.getEnvironment(listener).expand(result);
-			} else {
-				if (result == null && regexp == null && description != null) {
-					result = description;
-				}
+			} else if (result == null && regexp == null && description != null) {
+				result = description;
 			}
 
 			if (result == null) {
@@ -83,10 +104,11 @@ public class DescriptionSetterHelper {
 			result = urlify(result);
 
 			build.addAction(new DescriptionSetterAction(result));
-			if(build.getDescription() == null)
+			if(build.getDescription() == null || !appendMode) {
 				build.setDescription(result);
-			else
-				build.setDescription((appendMode ? build.getDescription() + "<br />" : "") + result);
+			} else {
+				appendDescription(build, result, unique);
+			}
 
 			setEnvironmentVariable(result, build);
 
@@ -133,8 +155,7 @@ public class DescriptionSetterHelper {
 		return null;
 	}
 
-	private static String getExpandedDescription(Matcher matcher,
-			String description) {
+	private static String getExpandedDescription(Matcher matcher, String description) {
 		String result = description;
 		if (result == null) {
 			if (matcher.groupCount() == 0) {
@@ -146,9 +167,7 @@ public class DescriptionSetterHelper {
 
 		// Expand all groups: 1..Count, as well as 0 for the entire pattern
 		for (int i = matcher.groupCount(); i >= 0; i--) {
-			result =
-					result.replace("\\" + i,
-							matcher.group(i) == null ? "" : matcher.group(i));
+			result = result.replace("\\" + i, matcher.group(i) == null ? "" : matcher.group(i));
 		}
 		return result;
 	}
@@ -160,5 +179,32 @@ public class DescriptionSetterHelper {
 		} catch (MalformedURLException e) {
 			return text;
 		}
+	}
+
+	/**
+	 * Set the new description to the build.
+	 *
+	 * @param build the build whose description to set.
+	 * @param description the description to set.
+	 * @param unique if true, append only a new unique description (by its content)
+	 * @throws IOException if an issue occurred during change build's description.
+	 */
+	public static void appendDescription(final AbstractBuild<?, ?> build,
+		final String description, final boolean unique) throws IOException {
+
+		List<String> list = new ArrayList<String>(Arrays.asList(build.getDescription().split("<br />")));
+		for (String new_description : new ArrayList<String>(Arrays.asList(description.split("<br />")))) {
+			if ((unique && !list.contains(new_description)) || !unique) {
+				list.add(new_description);
+			}
+		}
+		StringBuffer sb = new StringBuffer();
+		boolean first = true;
+		for (String str : list) {
+			sb.append((first ? "" : "<br />") + str);
+			first = false;
+		}
+
+		build.setDescription(sb.toString());
 	}
 }

@@ -24,12 +24,16 @@ public class DescriptionSetterBuilder extends Builder {
 	private final String regexp;
 	private final String description;
 	private final boolean appendMode;
+	private final boolean unique;
 
 	@DataBoundConstructor
-	public DescriptionSetterBuilder(String regexp, String description, boolean appendMode) {
+	public DescriptionSetterBuilder(String regexp, String description, boolean appendMode,
+		boolean unique) {
+
 		this.regexp = regexp;
 		this.description = Util.fixEmptyAndTrim(description);
 		this.appendMode = appendMode;
+		this.unique = unique;
 	}
 
 	@Override
@@ -37,7 +41,7 @@ public class DescriptionSetterBuilder extends Builder {
 			BuildListener listener) throws InterruptedException {
 
 		return DescriptionSetterHelper.setDescription(build, listener, regexp,
-				description, appendMode);
+				description, appendMode, unique);
 	}
 
 	@Extension
@@ -59,8 +63,7 @@ public class DescriptionSetterBuilder extends Builder {
 		}
 
 		@Override
-		public Builder newInstance(StaplerRequest req, JSONObject formData)
-				throws FormException {
+		public Builder newInstance(StaplerRequest req, JSONObject formData)  throws FormException {
 			return req.bindJSON(DescriptionSetterBuilder.class, formData);
 		}
 	}
@@ -78,4 +81,7 @@ public class DescriptionSetterBuilder extends Builder {
 		return description;
 	}
 
+	public boolean isAppendMode() { return appendMode; }
+
+	public boolean isUnique() { return unique; }
 }
