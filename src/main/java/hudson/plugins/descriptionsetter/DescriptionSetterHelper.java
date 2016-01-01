@@ -5,6 +5,7 @@ import hudson.model.ParameterValue;
 import hudson.model.AbstractBuild;
 import hudson.model.ParametersAction;
 import hudson.model.StringParameterValue;
+import jenkins.model.Jenkins;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 
 /**
  * Helper class that performs common functionality used by both
@@ -69,9 +72,17 @@ public class DescriptionSetterHelper {
 				result = getExpandedDescription(matcher, description);
 				result = build.getEnvironment(listener).expand(result);
 			} else {
-				if (result == null && regexp == null && description != null) {
-					result = description;
-				}
+				if (result == null && (regexp == null || regexp.isEmpty()) && description != null) {
+                    if (Jenkins.getInstance().getPlugin("token-macro") != null) {
+                        try {
+                            result = TokenMacro.expandAll(build, listener, description);
+                        } catch (Exception e) {
+                            listener.getLogger().println(e.getMessage());
+                        }
+                    } else
+                        result = description;
+                        listener.getLogger().print("Macros cannot be expanded as Token Macro Plugin is not installed. Please install the Token Macro plugin to use macros.");
+ 				}
 			}
 
 			if (result == null) {
@@ -109,7 +120,7 @@ public class DescriptionSetterHelper {
 	private static Matcher parseLog(File logFile, String regexp)
 			throws IOException, InterruptedException {
 
-		if (regexp == null) {
+		if (regexp == null || regexp.isEmpty()) {
 			return null;
 		}
 

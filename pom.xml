@@ -10,7 +10,7 @@
   <version>1.11-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Jenkins description setter plugin</name>
-  <url>http://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin</url>
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/DescriptionSetterPlugin</url>
 
   <developers>
       <developer>
@@ -46,6 +46,16 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+    
+    <dependencies>
+     <dependency>
+       <groupId>org.jenkins-ci.plugins</groupId>
+       <artifactId>token-macro</artifactId>
+       <version>1.5.1</version>
+       <optional>true</optional>
+     </dependency>
+   </dependencies>
+   
 </project>  
   
 
