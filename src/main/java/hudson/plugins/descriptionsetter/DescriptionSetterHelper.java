@@ -71,18 +71,12 @@ public class DescriptionSetterHelper {
 			if (matcher != null) {
 				result = getExpandedDescription(matcher, description);
 				result = build.getEnvironment(listener).expand(result);
-			} else {
-				if (result == null && (regexp == null || regexp.isEmpty()) && description != null) {
-                    if (Jenkins.getInstance().getPlugin("token-macro") != null) {
-                        try {
-                            result = TokenMacro.expandAll(build, listener, description);
-                        } catch (Exception e) {
-                            listener.getLogger().println(e.getMessage());
-                        }
-                    } else
-                        result = description;
-                        listener.getLogger().print("Macros cannot be expanded as Token Macro Plugin is not installed. Please install the Token Macro plugin to use macros.");
- 				}
+			} else if (result == null && (regexp == null || regexp.isEmpty()) && description != null) {
+                try {
+                    result = TokenMacro.expandAll(build, listener, description);
+                } catch (Exception e) {
+                    listener.getLogger().println(e.getMessage());
+                }
 			}
 
 			if (result == null) {

@@ -3,6 +3,8 @@
 	<ul>
 	<li>If a regular expression is configured, every instance of \n will be replaced with the n-th group of the regular expression match.</li>
 	<li>If the description is empty, the first group selected by the regular expression will be used as description.</li>
-	<li>If no regular expression is configured, the description is taken verbatim. If the token macro plugin is installed, macros are expanded.</li>
 	</ul>
+	This field can contain the following macros:
+
+    <help xmlns="/lib/token-macro" />
 </div>
