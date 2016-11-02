@@ -72,11 +72,11 @@ public class DescriptionSetterHelper {
 				result = getExpandedDescription(matcher, description);
 				result = build.getEnvironment(listener).expand(result);
 			} else if (result == null && (regexp == null || regexp.isEmpty()) && description != null) {
-                try {
-                    result = TokenMacro.expandAll(build, listener, description);
-                } catch (Exception e) {
-                    listener.getLogger().println(e.getMessage());
-                }
+				try {
+					result = TokenMacro.expandAll(build, listener, description);
+				} catch (Exception e) {
+					listener.getLogger().println(e.getMessage());
+				}
 			}
 
 			if (result == null) {
