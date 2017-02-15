@@ -60,50 +60,6 @@ public class DescriptionSetterHelper {
 	 *         description could be set or not.
 	 * @throws InterruptedException if the build is interrupted by the user.
 	 */
-	public static boolean setDescriptionBackup(AbstractBuild<?, ?> build,
-			BuildListener listener, String regexp, String description, boolean appendMode, boolean allMatches)
-			throws InterruptedException {
-		try {
-			Matcher matcher;
-			String result = null;
-
-			matcher = parseLog(build.getLogFile(), regexp);
-			
-			if (matcher != null) {
-				result = getExpandedDescription(matcher, description);
-				result = build.getEnvironment(listener).expand(result);
-			} else {
-				if (result == null && regexp == null && description != null) {
-					result = description;
-				}
-			}
-
-			if (result == null) {
-				listener.getLogger().println(
-						LOG_PREFIX + " Could not determine description.");
-				return true;
-			}
-
-			result = urlify(result);
-
-			build.addAction(new DescriptionSetterAction(result));
-		
-			if(build.getDescription() == null)
-				build.setDescription(result);
-			else
-				build.setDescription((appendMode ? build.getDescription() + "<br />" : "") + result);
-
-			setEnvironmentVariable(result, build);
-
-			listener.getLogger().println(LOG_PREFIX + " Description set: " + result);
-		} catch (IOException e) {
-			e.printStackTrace(listener.error(LOG_PREFIX
-					+ " Error while parsing logs for description-setter"));
-		}
-		
-		return true;
-	}
-	
 	public static boolean setDescription(AbstractBuild<?, ?> build,
 			BuildListener listener, String regexp, String description, boolean appendMode, boolean allMatches)
 			throws InterruptedException {
@@ -133,19 +89,19 @@ public class DescriptionSetterHelper {
 			result = urlify(result);
 
 			build.addAction(new DescriptionSetterAction(result));
-		
+	
 			if (build.getDescription() == null) {
 				build.setDescription(result);
 			} else {
 				if (appendMode) {
 					build.setDescription(build.getDescription() + "<br />" + result);
-					if (allMatches && logLinesCount != 0) {
-						setIterativeDescription(build, listener, regexp, description, appendMode, allMatches);
-					}
 				} else {
 					build.setDescription("" + result);
 				}
-				//build.setDescription((appendMode ? build.getDescription() + "<br />" : "") + result);
+			}
+			
+			if (appendMode && allMatches && logLinesCount != 0) {
+				setIterativeDescription(build, listener, regexp, description, appendMode, allMatches);
 			}
 
 			setEnvironmentVariable(result, build);
@@ -186,19 +142,19 @@ public class DescriptionSetterHelper {
 			result = urlify(result);
 
 			build.addAction(new DescriptionSetterAction(result));
-		
+			
 			if (build.getDescription() == null) {
 				build.setDescription(result);
 			} else {
 				if (appendMode) {
 					build.setDescription(build.getDescription() + "<br />" + result);
-					if (allMatches && logLinesCount != 0) {
-						setIterativeDescription(build, listener, regexp, description, appendMode, allMatches);
-					}
 				} else {
 					build.setDescription("" + result);
 				}
-				//build.setDescription((appendMode ? build.getDescription() + "<br />" : "") + result);
+			}
+			
+			if (appendMode && allMatches && logLinesCount != 0) {
+				setIterativeDescription(build, listener, regexp, description, appendMode, allMatches);
 			}
 
 			setEnvironmentVariable(result, build);
@@ -217,33 +173,6 @@ public class DescriptionSetterHelper {
 		List<ParameterValue> params = new ArrayList<ParameterValue>();
 		params.add(new StringParameterValue("DESCRIPTION_SETTER_DESCRIPTION", result));
 		build.addAction(new ParametersAction(params));
-	}
-
-	private static Matcher parseLogBackup(File logFile, String regexp)
-			throws IOException, InterruptedException {
-
-		if (regexp == null) {
-			return null;
-		}
-		
-		// Assume default encoding and text files
-		String line;
-		Pattern pattern = Pattern.compile(regexp);
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(logFile));
-			while ((line = reader.readLine()) != null) {
-				Matcher matcher = pattern.matcher(line);
-				if (matcher.find()) {
-					return matcher;
-				}
-			}
-		} finally {
-			if (reader != null) {
-				reader.close();
-			}
-		}
-		return null;
 	}
 	
 	private static Matcher parseLog(File logFile, String regexp)
@@ -280,10 +209,7 @@ public class DescriptionSetterHelper {
 			reader = new BufferedReader(new FileReader(logFile));
 			while ((line = reader.readLine()) != null) {
 				currentLine++;
-				if (currentLine <= parsedLines) {
-					continue;
-				}
-				if (currentLine <= logLinesCount) {
+				if (currentLine > parsedLines && currentLine <= logLinesCount) {
 					Matcher matcher = pattern.matcher(line);
 					if (matcher.find()) {
 						parsedLines = currentLine;
