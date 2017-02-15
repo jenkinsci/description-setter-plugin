@@ -1,51 +1,63 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.jenkins-ci.plugins</groupId>
-    <artifactId>plugin</artifactId>
-    <version>1.560</version>
-  </parent>
-  
-  <artifactId>description-setter</artifactId>
-  <version>1.11-SNAPSHOT</version>
-  <packaging>hpi</packaging>
-  <name>Jenkins description setter plugin</name>
-  <url>http://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin</url>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jenkins-ci.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.609.3</version>
+	</parent>
 
-  <developers>
-      <developer>
-          <id>michael1010</id>
-          <name>Michael</name>
-      </developer>
-      <developer>
-          <id>huybrechts</id>
-          <name>Tom Huybrechts</name>
-      </developer>
-      <developer>
-          <id>pjanouse</id>
-          <name>Pavel Janousek</name>
-      </developer>
-  </developers>
+	<artifactId>description-setter</artifactId>
+	<version>1.2-SNAPSHOT</version>
+	<packaging>hpi</packaging>
+	<name>Jenkins description setter plugin</name>
+	<url>http://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin</url>
 
-  <scm>
-    <connection>scm:git:git://github.com/jenkinsci/description-setter-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/description-setter-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/description-setter-plugin</url>
-  </scm>
+	<developers>
+		<developer>
+			<id>michael1010</id>
+			<name>Michael</name>
+		</developer>
+		<developer>
+			<id>huybrechts</id>
+			<name>Tom Huybrechts</name>
+		</developer>
+		<developer>
+			<id>pjanouse</id>
+			<name>Pavel Janousek</name>
+		</developer>
+		<developer>
+			<id>keydam</id>
+			<name>Damien Aiello</name>
+		</developer>
+	</developers>
 
-    <repositories>
-        <repository>
-            <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
-        </repository>
-    </repositories>
+	<scm>
+		<connection>scm:git:git://github.com/jenkinsci/description-setter-plugin.git</connection>
+		<developerConnection>scm:git:git@github.com:jenkinsci/description-setter-plugin.git</developerConnection>
+		<url>https://github.com/jenkinsci/description-setter-plugin</url>
+	</scm>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+	<repositories>
+		<repository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>matrix-project</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+	</dependencies>
 </project>  
   
 

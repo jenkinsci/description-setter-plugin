@@ -69,32 +69,32 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
 
 	public void testAppendDescriptionInBuilder() throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true, false));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		assertEquals("test1<br />test2", build.getDescription());
 	}
 
 	public void testRewriteDescriptionInBuilder() throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", false, false));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		assertEquals("test2", build.getDescription());
 	}
 
 	private String getDescription(String text, Result result, String regexp,
-			String description, boolean appendMode) throws Exception {
+			String description, boolean appendMode, boolean allMatches) throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
 		project.getBuildersList().add(new TestBuilder(text, result));
 		project.getBuildersList().add(
-				new DescriptionSetterBuilder(regexp, description, appendMode));
+				new DescriptionSetterBuilder(regexp, description, appendMode, allMatches));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		return build.getDescription();
 	}
 
 	private String getDescription(String text, Result result, String regexp,
 								  String description) throws Exception {
-		return getDescription(text, result, regexp, description, true);
+		return getDescription(text, result, regexp, description, true, false);
 	}
 }

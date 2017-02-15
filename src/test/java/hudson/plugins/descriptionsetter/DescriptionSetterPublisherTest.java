@@ -79,30 +79,30 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 
 	public void testAppendDescriptionInPublisher() throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
 		project.getPublishersList().add(
-				new DescriptionSetterPublisher("", "", "test2", "", false, true));
+				new DescriptionSetterPublisher("", "", "test2", "", false, true, false));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		assertEquals("test1<br />test2", build.getDescription());
 	}
 
 	public void testRewriteDescriptionInPublisher() throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
+		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, false));
 		project.getPublishersList().add(
-				new DescriptionSetterPublisher("", "", "test2", "", false, false));
+				new DescriptionSetterPublisher("", "", "test2", "", false, false, false));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		assertEquals("test2", build.getDescription());
 	}
 
 	private String getDescription(String text, Result result, String regexp,
 			String regexpForFailed, String description,
-			String descriptionForFailed, boolean appendMode) throws Exception {
+			String descriptionForFailed, boolean appendMode, boolean allMatches) throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
 		project.getBuildersList().add(new TestBuilder(text, result));
 		project.getPublishersList().add(
 				new DescriptionSetterPublisher(regexp, regexpForFailed,
-						description, descriptionForFailed, false, appendMode));
+						description, descriptionForFailed, false, appendMode, allMatches));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		return build.getDescription();
 	}
@@ -110,6 +110,6 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 	private String getDescription(String text, Result result, String regexp,
 								  String regexpForFailed, String description,
 								  String descriptionForFailed) throws Exception {
-		return getDescription(text, result, regexp, regexpForFailed, description, descriptionForFailed, true);
+		return getDescription(text, result, regexp, regexpForFailed, description, descriptionForFailed, true, false);
 	}
 }
