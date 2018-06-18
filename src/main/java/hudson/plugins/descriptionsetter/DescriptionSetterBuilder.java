@@ -24,12 +24,14 @@ public class DescriptionSetterBuilder extends Builder {
 	private final String regexp;
 	private final String description;
 	private final boolean appendMode;
+	private final boolean allMatches;
 
 	@DataBoundConstructor
-	public DescriptionSetterBuilder(String regexp, String description, boolean appendMode) {
+	public DescriptionSetterBuilder(String regexp, String description, boolean appendMode, boolean allMatches) {
 		this.regexp = regexp;
 		this.description = Util.fixEmptyAndTrim(description);
 		this.appendMode = appendMode;
+		this.allMatches = allMatches;
 	}
 
 	@Override
@@ -37,7 +39,7 @@ public class DescriptionSetterBuilder extends Builder {
 			BuildListener listener) throws InterruptedException {
 
 		return DescriptionSetterHelper.setDescription(build, listener, regexp,
-				description, appendMode);
+				description, appendMode, allMatches);
 	}
 
 	@Extension
