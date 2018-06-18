@@ -6,7 +6,7 @@ import hudson.model.FreeStyleProject;
 
 import org.jvnet.hudson.test.HudsonTestCase;
 
-public class DescriptionSetterBuilderTest extends HudsonTestCase {
+public class DescriptionSetterWrapperTest extends HudsonTestCase {
 
 	public void testSuccessDefaultDescription() throws Exception {
 		assertEquals("one",
@@ -40,9 +40,6 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
 	}
 	
 	public void testSuccessWithValidTokenMacro() throws Exception {
-         FreeStyleProject fooProject = createFreeStyleProject("foo");
-         fooProject.scheduleBuild2(0).get();
- 
          assertEquals(
                  "#1",
                  getDescription("xxx", Result.SUCCESS, null,
@@ -50,9 +47,6 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
      }
 		 
      public void testSuccessWithInvalidTokenMacro() throws Exception {
-         FreeStyleProject fooProject = createFreeStyleProject("foo");
-         fooProject.scheduleBuild2(0).get();
- 
          assertEquals(
                  null,
                  getDescription("xxx", Result.SUCCESS, null,
@@ -90,7 +84,7 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
 
 	public void testAppendDescriptionInBuilder() throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
+		project.getBuildWrappersList().add(new DescriptionSetterWrapper("", "test1", false));
 		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		assertEquals("test1<br />test2", build.getDescription());
@@ -98,7 +92,7 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
 
 	public void testRewriteDescriptionInBuilder() throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
-		project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
+		project.getBuildWrappersList().add(new DescriptionSetterWrapper("", "test1", false));
 		project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", false));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		assertEquals("test2", build.getDescription());
@@ -107,9 +101,8 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
 	private String getDescription(String text, Result result, String regexp,
 			String description, boolean appendMode) throws Exception {
 		FreeStyleProject project = createFreeStyleProject();
+		project.getBuildWrappersList().add(new DescriptionSetterWrapper(regexp, description, appendMode));
 		project.getBuildersList().add(new TestBuilder(text, result));
-		project.getBuildersList().add(
-				new DescriptionSetterBuilder(regexp, description, appendMode));
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		return build.getDescription();
 	}
