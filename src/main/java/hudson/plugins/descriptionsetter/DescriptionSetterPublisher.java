@@ -162,9 +162,9 @@ public class DescriptionSetterPublisher extends Recorder implements
 				}
 				else if(build.getDescription() != null && run.getDescription() != null)
 				{
-					String oldDescr = build.getDescription();
-					String newDescr = oldDescr + "<br />" + run.getDescription();
-					build.setDescription(newDescr);
+					build.setDescription(
+						(appendMode ? build.getDescription() + "<br />" : "")
+						+ run.getDescription());
 				}
 				return true;
 			}
