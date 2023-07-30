@@ -1,5 +1,6 @@
 package hudson.plugins.descriptionsetter;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
@@ -103,8 +104,11 @@ public class DescriptionSetterPublisher extends Recorder implements
 		}
 
 		@Override
-		public Publisher newInstance(StaplerRequest req, JSONObject formData)
+		public Publisher newInstance(StaplerRequest req, @NonNull JSONObject formData)
 				throws FormException {
+			if (req == null) {
+				return null;
+			}
 			return req.bindJSON(DescriptionSetterPublisher.class, formData);
 		}
 
