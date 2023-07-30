@@ -68,8 +68,10 @@ public class DescriptionSetterPublisher extends Recorder implements
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException {
 
+		Result result = build.getResult();
 		boolean useUnstable = (regexpForFailed != null || descriptionForFailed != null)
-				&& build.getResult().isWorseThan(Result.UNSTABLE);
+				&& result != null
+				&& result.isWorseThan(Result.UNSTABLE);
 		return DescriptionSetterHelper.setDescription(build, listener,
 				useUnstable ? regexpForFailed : regexp,
 				useUnstable ? descriptionForFailed : description,
