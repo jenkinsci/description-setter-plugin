@@ -16,7 +16,7 @@
         <changelist>-SNAPSHOT</changelist>
 
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
-        <jenkins.version>2.346.3</jenkins.version>
+        <jenkins.version>2.361.4</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     </properties>
     <name>Jenkins description setter plugin</name>
