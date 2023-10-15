@@ -37,7 +37,7 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/description-setter-plugin.git</connection>
+        <connection>scm:git:https://github.com/jenkinsci/description-setter-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/description-setter-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/description-setter-plugin</url>
     </scm>
