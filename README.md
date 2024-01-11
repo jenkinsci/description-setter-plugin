@@ -1,6 +1,6 @@
 This plugin sets the description for each build, based upon a
 [RegEx](http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html)
-test of the build log file.  
+test of the build log file.
 To use the plug in, you must tick it in the Post Build Actions, in your
 job configuration page. Once ticked, you will notice that it asks for a
 [RegEx](http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html).
@@ -97,7 +97,7 @@ the description field empty, the first match group will be used.)
 
 -   Fixes an issue where the
     [RegEx](http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html) could
-    return only 1 item and cause and array out of bounds problem. 
+    return only 1 item and cause and array out of bounds problem.
 
 #### Release 1.2
 
@@ -106,4 +106,3 @@ the description field empty, the first match group will be used.)
     description upon build failure and if you wish to use a different
     [RegEx](http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html) then
     the main one you can enter it in the text box below.
-
