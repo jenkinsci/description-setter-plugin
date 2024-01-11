@@ -24,7 +24,7 @@
 		</f:entry>
 		<f:entry title="${%Add Environment Variable}" field="envVariable">
 			<f:checkbox default="true" />
-		</f:entry>		
+		</f:entry>
 	</f:advanced>
 
 </j:jelly>
