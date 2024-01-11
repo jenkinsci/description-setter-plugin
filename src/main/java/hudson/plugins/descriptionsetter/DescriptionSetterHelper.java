@@ -7,8 +7,6 @@ import hudson.model.ParametersAction;
 import hudson.model.StringParameterValue;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -63,10 +61,9 @@ public class DescriptionSetterHelper {
 			BuildListener listener, String regexp, String description, boolean appendMode, boolean envVariable)
 			throws InterruptedException {
 		try {
-			Matcher matcher;
 			String result = null;
 
-			matcher = parseLog(build.getLogFile(), regexp);
+			Matcher matcher = parseLog(build, regexp);
 			if (matcher != null) {
 				result = getExpandedDescription(matcher, description);
 				result = build.getEnvironment(listener).expand(result);
@@ -110,8 +107,8 @@ public class DescriptionSetterHelper {
 		build.addAction(new ParametersAction(params));
 	}
 
-	private static Matcher parseLog(File logFile, String regexp)
-			throws IOException, InterruptedException {
+	private static Matcher parseLog(AbstractBuild<?, ?> build, String regexp)
+			throws IOException {
 
 		if (regexp == null) {
 			return null;
@@ -120,18 +117,12 @@ public class DescriptionSetterHelper {
 		// Assume default encoding and text files
 		String line;
 		Pattern pattern = Pattern.compile(regexp);
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(logFile));
+		try (BufferedReader reader = new BufferedReader(build.getLogReader())) {
 			while ((line = reader.readLine()) != null) {
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.find()) {
 					return matcher;
 				}
-			}
-		} finally {
-			if (reader != null) {
-				reader.close();
 			}
 		}
 		return null;
