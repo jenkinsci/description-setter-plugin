@@ -1,5 +1,6 @@
 package hudson.plugins.descriptionsetter;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
@@ -67,8 +68,10 @@ public class DescriptionSetterPublisher extends Recorder implements
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException {
 
+		Result result = build.getResult();
 		boolean useUnstable = (regexpForFailed != null || descriptionForFailed != null)
-				&& build.getResult().isWorseThan(Result.UNSTABLE);
+				&& result != null
+				&& result.isWorseThan(Result.UNSTABLE);
 		return DescriptionSetterHelper.setDescription(build, listener,
 				useUnstable ? regexpForFailed : regexp,
 				useUnstable ? descriptionForFailed : description,
@@ -103,8 +106,11 @@ public class DescriptionSetterPublisher extends Recorder implements
 		}
 
 		@Override
-		public Publisher newInstance(StaplerRequest req, JSONObject formData)
+		public Publisher newInstance(StaplerRequest req, @NonNull JSONObject formData)
 				throws FormException {
+			if (req == null) {
+				return null;
+			}
 			return req.bindJSON(DescriptionSetterPublisher.class, formData);
 		}
 
