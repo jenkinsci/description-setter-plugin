@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.51</version>
+        <version>4.74</version>
         <relativePath />
     </parent>
     <groupId>io.jenkins.plugins</groupId>
@@ -16,7 +16,7 @@
         <changelist>-SNAPSHOT</changelist>
 
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
-        <jenkins.version>2.346.3</jenkins.version>
+        <jenkins.version>2.361.4</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     </properties>
     <name>Jenkins description setter plugin</name>
@@ -37,7 +37,7 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/description-setter-plugin.git</connection>
+        <connection>scm:git:https://github.com/jenkinsci/description-setter-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/description-setter-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/description-setter-plugin</url>
     </scm>
@@ -45,8 +45,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.346.x</artifactId>
-                <version>1763.v092b_8980a_f5e</version>
+                <artifactId>bom-2.361.x</artifactId>
+                <version>2102.v854b_fec19c92</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
