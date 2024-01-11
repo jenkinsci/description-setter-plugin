@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.75</version>
+        <version>4.76</version>
         <relativePath />
     </parent>
     <groupId>io.jenkins.plugins</groupId>
@@ -26,18 +26,10 @@
             <id>michael1010</id>
             <name>Michael</name>
         </developer>
-        <developer>
-            <id>huybrechts</id>
-            <name>Tom Huybrechts</name>
-        </developer>
-        <developer>
-            <id>pjanouse</id>
-            <name>Pavel Janousek</name>
-        </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/description-setter-plugin.git</connection>
+        <connection>scm:git:https://github.com/jenkinsci/description-setter-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/description-setter-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/description-setter-plugin</url>
     </scm>
@@ -46,7 +38,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-2.401.x</artifactId>
-                <version>2612.v3d6a_2128c0ef</version>
+                <version>2705.vf5c48c31285b_</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
