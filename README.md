@@ -40,4 +40,4 @@ You can now use different groups captured by the regular expression (e.g. "foo \
 
 ## Changelog
 
-Release notes are recorded in https://github.com/jenkinsci/description-setter-plugin/releases[GitHub].
+Release notes are recorded in [GitHub](https://github.com/jenkinsci/description-setter-plugin/releases).
