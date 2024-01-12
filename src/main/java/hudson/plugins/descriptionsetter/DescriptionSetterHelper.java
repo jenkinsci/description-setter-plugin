@@ -72,7 +72,7 @@ public class DescriptionSetterHelper {
                 result = getExpandedDescription(matcher, description);
                 result = build.getEnvironment(listener).expand(result);
             } else {
-                if (result == null && regexp == null && description != null) {
+                if (regexp == null && description != null) {
                     result = description;
                 }
             }

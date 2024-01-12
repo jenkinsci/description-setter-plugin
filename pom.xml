@@ -7,32 +7,42 @@
     <version>4.76</version>
     <relativePath />
   </parent>
-  <groupId>io.jenkins.plugins</groupId>
+
   <artifactId>description-setter</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${changelist}</version>
   <packaging>hpi</packaging>
   <name>Jenkins description setter plugin</name>
   <url>https://github.com/jenkinsci/description-setter-plugin</url>
+
   <developers>
     <developer>
       <id>michael1010</id>
       <name>Michael</name>
+    </developer>
+    <developer>
+      <id>markewaite</id>
+      <name>Mark Waite</name>
     </developer>
   </developers>
 
   <scm>
     <connection>scm:git:https://github.com/jenkinsci/description-setter-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/description-setter-plugin.git</developerConnection>
+    <tag>${scmTag}</tag>
     <url>https://github.com/jenkinsci/description-setter-plugin</url>
   </scm>
+
   <properties>
-    <revision>1.11</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <changelist>999999-SNAPSHOT</changelist>
 
     <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
     <jenkins.version>2.401.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+    <spotbugs.effort>Max</spotbugs.effort>
+    <spotbugs.threshold>Low</spotbugs.threshold>
+    <spotless.check.skip>false</spotless.check.skip>
   </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
