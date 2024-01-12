@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>description-setter</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${changelist}</version>
   <packaging>hpi</packaging>
   <name>Jenkins description setter plugin</name>
   <url>https://github.com/jenkinsci/description-setter-plugin</url>
@@ -33,8 +33,7 @@
   </scm>
 
   <properties>
-    <revision>1.11</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <changelist>999999-SNAPSHOT</changelist>
 
     <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
     <jenkins.version>2.401.3</jenkins.version>
