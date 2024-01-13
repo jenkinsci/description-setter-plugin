@@ -19,6 +19,7 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import java.io.IOException;
 import java.io.ObjectStreamException;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
@@ -164,7 +165,11 @@ public class DescriptionSetterPublisher extends Recorder implements MatrixAggreg
                     build.setDescription(run.getDescription());
                 } else if (build.getDescription() != null && run.getDescription() != null) {
                     String oldDescr = build.getDescription();
-                    String newDescr = oldDescr + "<br />" + run.getDescription();
+                    /* Don't want a runtime dependency on OWASP markup formatter plugin */
+                    String formatter =
+                            Jenkins.get().getMarkupFormatter().getClass().getName();
+                    String htmlBreak = formatter.contains("HtmlMarkup") ? "<br>" : " ";
+                    String newDescr = oldDescr + htmlBreak + run.getDescription();
                     build.setDescription(newDescr);
                 }
                 return true;
