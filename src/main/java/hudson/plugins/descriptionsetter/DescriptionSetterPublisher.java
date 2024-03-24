@@ -38,6 +38,7 @@ public class DescriptionSetterPublisher extends Recorder implements MatrixAggreg
     private final String descriptionForFailed;
     private final boolean setForMatrix;
     private final boolean appendMode;
+    private final boolean envVariable;
 
     @Deprecated
     private transient boolean setForFailed = false;
@@ -52,13 +53,15 @@ public class DescriptionSetterPublisher extends Recorder implements MatrixAggreg
             String description,
             String descriptionForFailed,
             boolean setForMatrix,
-            boolean appendMode) {
+            boolean appendMode,
+            boolean envVariable) {
         this.regexp = regexp;
         this.regexpForFailed = regexpForFailed;
         this.description = Util.fixEmptyAndTrim(description);
         this.descriptionForFailed = Util.fixEmptyAndTrim(descriptionForFailed);
         this.setForMatrix = setForMatrix;
         this.appendMode = appendMode;
+        this.envVariable = envVariable;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -78,13 +81,14 @@ public class DescriptionSetterPublisher extends Recorder implements MatrixAggreg
                 listener,
                 useUnstable ? regexpForFailed : regexp,
                 useUnstable ? descriptionForFailed : description,
-                appendMode);
+                appendMode,
+                envVariable);
     }
 
     private Object readResolve() throws ObjectStreamException {
         if (explicitNotRegexp) {
             return new DescriptionSetterPublisher(
-                    null, null, regexp, setForFailed ? regexpForFailed : null, false, false);
+                    null, null, regexp, setForFailed ? regexpForFailed : null, false, false, true);
         } else {
             return this;
         }
