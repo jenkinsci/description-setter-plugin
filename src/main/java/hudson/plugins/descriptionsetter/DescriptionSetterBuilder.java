@@ -77,4 +77,9 @@ public class DescriptionSetterBuilder extends Builder {
     public String getDescription() {
         return description;
     }
+
+    @SuppressWarnings("unused")
+    public boolean getAppendMode() {
+        return appendMode;
+    }
 }
