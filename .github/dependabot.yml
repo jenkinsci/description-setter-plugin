@@ -1,13 +1,11 @@
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates
+
 version: 2
 updates:
-# Maintain dependencies for your plugin
 - package-ecosystem: maven
   directory: /
   schedule:
     interval: monthly
-  open-pull-requests-limit: 10
-  target-branch: master
-# Maintain dependencies for GitHub Actions
 - package-ecosystem: github-actions
   directory: /
   schedule:
