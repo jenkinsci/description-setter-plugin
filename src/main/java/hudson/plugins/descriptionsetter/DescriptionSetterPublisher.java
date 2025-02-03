@@ -22,7 +22,7 @@ import java.io.ObjectStreamException;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 /**
  * The DescriptionSetterPublisher allows the description of a build to be set as
@@ -108,7 +108,7 @@ public class DescriptionSetterPublisher extends Recorder implements MatrixAggreg
         }
 
         @Override
-        public Publisher newInstance(StaplerRequest req, @NonNull JSONObject formData) throws FormException {
+        public Publisher newInstance(StaplerRequest2 req, @NonNull JSONObject formData) throws FormException {
             if (req == null) {
                 return null;
             }
