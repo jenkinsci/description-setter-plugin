@@ -6,6 +6,18 @@ Your pull request will be evaluated by the [Jenkins job](https://ci.jenkins.io/j
 
 Before submitting your change, please assure that you've added tests that verify the change.
 
+## Building and running the plugin
+
+The [plugin build process](https://www.jenkins.io/doc/developer/plugin-development/build-process/) is described in detail in the [plugin development chapter](https://www.jenkins.io/doc/developer/plugin-development/) of the [Jenkins developer guide](https://www.jenkins.io/doc/developer/).
+
+A development copy of the plugin can be run locally with the command:
+
+```
+mvn hpi:run
+```
+
+When submitting a pull request, please refer to the [plugin testing guidance](https://www.jenkins.io/doc/developer/plugin-development/plugin-release-tips/) in the Jenkins developer guide.
+
 ## Code formatting
 
 Source code and pom file formatting is maintained by the `spotless` maven plugin.
