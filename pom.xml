@@ -11,7 +11,7 @@
   <artifactId>description-setter</artifactId>
   <version>${changelist}</version>
   <packaging>hpi</packaging>
-  <name>Jenkins description setter plugin</name>
+  <name>Description Setter</name>
   <url>https://github.com/jenkinsci/description-setter-plugin</url>
 
   <scm>
