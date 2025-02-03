@@ -14,17 +14,6 @@
   <name>Jenkins description setter plugin</name>
   <url>https://github.com/jenkinsci/description-setter-plugin</url>
 
-  <developers>
-    <developer>
-      <id>michael1010</id>
-      <name>Michael</name>
-    </developer>
-    <developer>
-      <id>markewaite</id>
-      <name>Mark Waite</name>
-    </developer>
-  </developers>
-
   <scm>
     <connection>scm:git:https://github.com/jenkinsci/description-setter-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/description-setter-plugin.git</developerConnection>
