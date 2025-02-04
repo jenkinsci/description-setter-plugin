@@ -143,7 +143,7 @@ public class DescriptionSetterHelper {
     private static String urlify(String text) {
         try {
             new URL(text);
-            return String.format("<a href=\"%s\">%s</a>", text, text);
+            return "<a href=\"%s\">%s</a>".formatted(text, text);
         } catch (MalformedURLException e) {
             return text;
         }
