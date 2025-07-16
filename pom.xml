@@ -4,26 +4,15 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.76</version>
+    <version>5.18</version>
     <relativePath />
   </parent>
 
   <artifactId>description-setter</artifactId>
   <version>${changelist}</version>
   <packaging>hpi</packaging>
-  <name>Jenkins description setter plugin</name>
+  <name>Description Setter</name>
   <url>https://github.com/jenkinsci/description-setter-plugin</url>
-
-  <developers>
-    <developer>
-      <id>michael1010</id>
-      <name>Michael</name>
-    </developer>
-    <developer>
-      <id>markewaite</id>
-      <name>Mark Waite</name>
-    </developer>
-  </developers>
 
   <scm>
     <connection>scm:git:https://github.com/jenkinsci/description-setter-plugin.git</connection>
@@ -34,9 +23,9 @@
 
   <properties>
     <changelist>999999-SNAPSHOT</changelist>
-
-    <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
-    <jenkins.version>2.401.3</jenkins.version>
+    <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+    <jenkins.baseline>2.479</jenkins.baseline>
+    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <spotbugs.effort>Max</spotbugs.effort>
     <spotbugs.threshold>Low</spotbugs.threshold>
@@ -47,8 +36,8 @@
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.401.x</artifactId>
-        <version>2705.vf5c48c31285b_</version>
+        <artifactId>bom-${jenkins.baseline}.x</artifactId>
+        <version>4969.v6ffa_18d90c9f</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -59,6 +48,11 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>matrix-project</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>antisamy-markup-formatter</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

@@ -8,8 +8,8 @@ import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.model.Run;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 public class JobByDescription extends JobProperty<Job<?, ?>> {
 
@@ -36,7 +36,7 @@ public class JobByDescription extends JobProperty<Job<?, ?>> {
         }
 
         @Override
-        public JobProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public JobProperty<?> newInstance(StaplerRequest2 req, JSONObject formData) throws FormException {
             return new JobByDescription();
         }
     }
@@ -61,7 +61,7 @@ public class JobByDescription extends JobProperty<Job<?, ?>> {
             return "by-description";
         }
 
-        public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+        public Object getDynamic(String token, StaplerRequest2 req, StaplerResponse2 rsp) {
             for (Run<?, ?> run : owner.getBuilds()) {
                 DescriptionSetterAction action = run.getAction(DescriptionSetterAction.class);
                 if (action != null && token.equals(action.getDescription())) {

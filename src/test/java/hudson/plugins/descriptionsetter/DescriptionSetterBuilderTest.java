@@ -1,8 +1,10 @@
 package hudson.plugins.descriptionsetter;
 
+import hudson.markup.RawHtmlMarkupFormatter;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import jenkins.model.Jenkins;
 import org.jvnet.hudson.test.HudsonTestCase;
 
 public class DescriptionSetterBuilderTest extends HudsonTestCase {
@@ -57,7 +59,12 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
         project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, true));
         project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true, true));
         FreeStyleBuild build = project.scheduleBuild2(0).get();
-        assertEquals("test1<br />test2", build.getDescription());
+        assertEquals("test1 test2", build.getDescription());
+
+        /* Use the safe HTML markup formatter */
+        Jenkins.get().setMarkupFormatter(new RawHtmlMarkupFormatter(false));
+        FreeStyleBuild buildWithFormatter = project.scheduleBuild2(0).get();
+        assertEquals("test1<br>test2", buildWithFormatter.getDescription());
     }
 
     public void testRewriteDescriptionInBuilder() throws Exception {

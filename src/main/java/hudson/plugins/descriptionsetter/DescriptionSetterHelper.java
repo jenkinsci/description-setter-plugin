@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import jenkins.model.Jenkins;
 
 /**
  * Helper class that performs common functionality used by both
@@ -85,8 +86,13 @@ public class DescriptionSetterHelper {
             result = urlify(result);
 
             build.addAction(new DescriptionSetterAction(result));
+
+            /* Don't want a runtime dependency on OWASP markup formatter plugin */
+            String formatter = Jenkins.get().getMarkupFormatter().getClass().getName();
+            String htmlBreak = formatter.contains("HtmlMarkup") ? "<br>" : " ";
+
             if (build.getDescription() == null) build.setDescription(result);
-            else build.setDescription((appendMode ? build.getDescription() + "<br />" : "") + result);
+            else build.setDescription((appendMode ? build.getDescription() + htmlBreak : "") + result);
 
             if (envVariable) {
                 setEnvironmentVariable(result, build);
@@ -146,7 +152,7 @@ public class DescriptionSetterHelper {
     private static String urlify(String text) {
         try {
             new URL(text);
-            return String.format("<a href=\"%s\">%s</a>", text, text);
+            return "<a href=\"%s\">%s</a>".formatted(text, text);
         } catch (MalformedURLException e) {
             return text;
         }
