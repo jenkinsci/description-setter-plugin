@@ -39,7 +39,7 @@ public class DescriptionSetterHelper {
     public static boolean setDescription(
             AbstractBuild<?, ?> build, BuildListener listener, String regexp, String description)
             throws InterruptedException {
-        return setDescription(build, listener, regexp, description, true);
+        return setDescription(build, listener, regexp, description, true, true);
     }
 
     /**
@@ -51,12 +51,19 @@ public class DescriptionSetterHelper {
      * @param regexp the regular expression to apply to the build log.
      * @param description the description to set.
      * @param appendMode if true, description is added to the current one
+     * @param envVariable if true, environment variable containing the
+     *         description is set.
      * @return true, regardless of if the regular expression matched and a
      *         description could be set or not.
      * @throws InterruptedException if the build is interrupted by the user.
      */
     public static boolean setDescription(
-            AbstractBuild<?, ?> build, BuildListener listener, String regexp, String description, boolean appendMode)
+            AbstractBuild<?, ?> build,
+            BuildListener listener,
+            String regexp,
+            String description,
+            boolean appendMode,
+            boolean envVariable)
             throws InterruptedException {
         try {
             String result = null;
@@ -87,7 +94,9 @@ public class DescriptionSetterHelper {
             if (build.getDescription() == null) build.setDescription(result);
             else build.setDescription((appendMode ? build.getDescription() + htmlBreak : "") + result);
 
-            setEnvironmentVariable(result, build);
+            if (envVariable) {
+                setEnvironmentVariable(result, build);
+            }
 
             listener.getLogger().println(LOG_PREFIX + " Description set: " + result);
         } catch (IOException e) {

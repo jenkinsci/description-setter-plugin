@@ -83,8 +83,8 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 
     public void testAppendDescriptionInPublisher() throws Exception {
         FreeStyleProject project = createFreeStyleProject();
-        project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
-        project.getPublishersList().add(new DescriptionSetterPublisher("", "", "test2", "", false, true));
+        project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, true));
+        project.getPublishersList().add(new DescriptionSetterPublisher("", "", "test2", "", false, true, true));
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         assertEquals("test1 test2", build.getDescription());
 
@@ -96,8 +96,8 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
 
     public void testRewriteDescriptionInPublisher() throws Exception {
         FreeStyleProject project = createFreeStyleProject();
-        project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
-        project.getPublishersList().add(new DescriptionSetterPublisher("", "", "test2", "", false, false));
+        project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, true));
+        project.getPublishersList().add(new DescriptionSetterPublisher("", "", "test2", "", false, false, true));
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         assertEquals("test2", build.getDescription());
     }
@@ -115,7 +115,7 @@ public class DescriptionSetterPublisherTest extends HudsonTestCase {
         project.getBuildersList().add(new TestBuilder(text, result));
         project.getPublishersList()
                 .add(new DescriptionSetterPublisher(
-                        regexp, regexpForFailed, description, descriptionForFailed, false, appendMode));
+                        regexp, regexpForFailed, description, descriptionForFailed, false, appendMode, true));
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         return build.getDescription();
     }
