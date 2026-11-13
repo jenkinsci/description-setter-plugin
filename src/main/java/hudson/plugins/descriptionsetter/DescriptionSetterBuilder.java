@@ -24,19 +24,21 @@ public class DescriptionSetterBuilder extends Builder {
     private final String regexp;
     private final String description;
     private final boolean appendMode;
+    private final boolean envVariable;
 
     @DataBoundConstructor
-    public DescriptionSetterBuilder(String regexp, String description, boolean appendMode) {
+    public DescriptionSetterBuilder(String regexp, String description, boolean appendMode, boolean envVariable) {
         this.regexp = regexp;
         this.description = Util.fixEmptyAndTrim(description);
         this.appendMode = appendMode;
+        this.envVariable = envVariable;
     }
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
             throws InterruptedException {
 
-        return DescriptionSetterHelper.setDescription(build, listener, regexp, description, appendMode);
+        return DescriptionSetterHelper.setDescription(build, listener, regexp, description, appendMode, envVariable);
     }
 
     @Extension

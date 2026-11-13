@@ -56,8 +56,8 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
 
     public void testAppendDescriptionInBuilder() throws Exception {
         FreeStyleProject project = createFreeStyleProject();
-        project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
-        project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true));
+        project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, true));
+        project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", true, true));
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         assertEquals("test1 test2", build.getDescription());
 
@@ -69,8 +69,8 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
 
     public void testRewriteDescriptionInBuilder() throws Exception {
         FreeStyleProject project = createFreeStyleProject();
-        project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false));
-        project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", false));
+        project.getBuildersList().add(new DescriptionSetterBuilder("", "test1", false, true));
+        project.getBuildersList().add(new DescriptionSetterBuilder("", "test2", false, true));
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         assertEquals("test2", build.getDescription());
     }
@@ -79,7 +79,7 @@ public class DescriptionSetterBuilderTest extends HudsonTestCase {
             throws Exception {
         FreeStyleProject project = createFreeStyleProject();
         project.getBuildersList().add(new TestBuilder(text, result));
-        project.getBuildersList().add(new DescriptionSetterBuilder(regexp, description, appendMode));
+        project.getBuildersList().add(new DescriptionSetterBuilder(regexp, description, appendMode, true));
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         return build.getDescription();
     }
